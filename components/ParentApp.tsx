@@ -6,6 +6,7 @@
  * menu and loads the family itself instead of being handed it by App.
  */
 import React, { useState, useEffect } from 'react';
+import { Navigate, Route, Routes, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { AlertTriangle, CalendarClock, HelpCircle, Home, Info, Loader2, LogOut, PhoneCall, Users } from 'lucide-react';
 import Header from './Header';
 import Dashboard from './Dashboard';
@@ -35,11 +36,49 @@ import {
   Specialist,
 } from '../shared/types';
 
-type ViewState =
-  | 'home' | 'about' | 'faq' | 'profile'
-  | 'checker' | 'vaccines' | 'facilities' | 'doctors'
-  | 'booking' | 'appointments'
-  | 'chat' | 'call' | 'subscribe';
+/**
+ * `?next=` comes back from the paywall and is handed straight to `navigate()`, so it has to
+ * be a same-origin path. `//evil.com` is protocol-relative, hence the second check.
+ */
+const safeNext = (value: string | null) =>
+  value && value.startsWith('/') && !value.startsWith('//') ? value : '/doctors';
+
+/**
+ * The paywall, re-stated as a route guard.
+ *
+ * Before routing, no unsubscribed parent could reach the directory at all: every entry point
+ * (`handleTalkToDoctor`, `handleBookAppointment`) checked `subscribed` first, and the upsell
+ * teaser rendered in ResultsDisplay instead. A typeable URL removes that funnel, so the
+ * premium screens have to deny in their own right — otherwise `/doctors` hands an
+ * unsubscribed parent exactly the names, photos, facilities, phones and ratings that
+ * DoctorUpsell exists to withhold.
+ *
+ * This is a product boundary, not a security one — see known debt in CLAUDE.md.
+ */
+const Premium: React.FC<{ subscribed: boolean; children: React.ReactNode }> = ({ subscribed, children }) => {
+  const { pathname } = useLocation();
+  if (!subscribed) return <Navigate to={`/subscribe?next=${encodeURIComponent(pathname)}`} replace />;
+  return <>{children}</>;
+};
+
+/**
+ * The three premium screens need a `Specialist` object, which lives in memory rather than in
+ * the URL. The id in the path keeps the URL honest and makes a later switch to refetch-by-id
+ * a change inside this one component; until then, a cold load or a stale id goes back to the
+ * directory instead of rendering the wrong doctor. Deliberate: see CLAUDE.md.
+ */
+const SpecialistRoute: React.FC<{
+  subscribed: boolean;
+  specialist: Specialist | null;
+  render: (specialist: Specialist) => React.ReactNode;
+}> = ({ subscribed, specialist, render }) => {
+  const { doctorId } = useParams();
+  // Subscription first: a specialist can be selected in the directory, so having one is not
+  // evidence the paywall was ever satisfied.
+  if (!subscribed) return <Premium subscribed={subscribed}>{null}</Premium>;
+  if (!specialist || specialist.id !== doctorId) return <Navigate to="/doctors" replace />;
+  return <>{render(specialist)}</>;
+};
 
 interface ParentAppProps extends ShellProps {
   onUserChange: (updater: (prev: SessionUser) => SessionUser) => void;
@@ -55,7 +94,10 @@ const ParentApp: React.FC<ParentAppProps> = ({
   onLogout,
   onUserChange,
 }) => {
-  const [view, setView] = useState<ViewState>('home');
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const [searchParams] = useSearchParams();
+
   const [profile, setProfile] = useState<FamilyProfile | null>(null);
   // Separate from `profile` being null: without this the onboarding screen flashes on
   // every reload before the children have loaded.
@@ -69,19 +111,16 @@ const ParentApp: React.FC<ParentAppProps> = ({
   const [contentLanguage, setContentLanguage] = useState<Language>('tet');
   const [isTranslating, setIsTranslating] = useState(false);
 
-  /**
-   * Where to land once the paywall is satisfied. A plain ViewState rather than the
-   * 'chat' | 'call' pair it replaced: the results screen needs to send the user back to
-   * itself, and booking needs to resume into the calendar rather than into chat.
-   */
-  const [afterSubscribe, setAfterSubscribe] = useState<ViewState>('doctors');
-
   const subscribed = user.subscribed;
 
-  const openPaywall = (destination: ViewState) => {
-    setAfterSubscribe(destination);
-    setView('subscribe');
-  };
+  /**
+   * Where to land once the paywall is satisfied, carried in the URL rather than in state so
+   * that reloading the paywall does not lose the destination. A full path, not a screen
+   * name: the results screen sends the user back to itself, and booking resumes into the
+   * calendar for one specific doctor rather than into chat.
+   */
+  const openPaywall = (destination: string) =>
+    navigate(`/subscribe?next=${encodeURIComponent(destination)}`);
 
   useEffect(() => {
     (async () => {
@@ -96,10 +135,11 @@ const ParentApp: React.FC<ParentAppProps> = ({
   }, []);
 
   // Screens swap in place, so without this a new screen inherits the previous scroll offset
-  // and appears already scrolled halfway down.
+  // and appears already scrolled halfway down. <ScrollRestoration> is data-router-only, so
+  // this stays manual.
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [view, profile]);
+  }, [pathname, profile]);
 
   // Re-translate an existing analysis when the UI language changes
   useEffect(() => {
@@ -145,14 +185,14 @@ const ParentApp: React.FC<ParentAppProps> = ({
   };
 
   const goHome = () => {
-    setView('home');
+    navigate('/');
     resetChecker();
   };
 
   const handleProfileSave = async (updated: FamilyProfile) => {
     // The server assigns real UUIDs and returns the canonical list.
     setProfile(await saveChildren(updated.children));
-    setView('home');
+    navigate('/');
   };
 
   /**
@@ -168,36 +208,40 @@ const ParentApp: React.FC<ParentAppProps> = ({
     const target = specialist ?? selectedSpecialist;
     if (specialist) setSelectedSpecialist(specialist);
 
+    // Without a specialist there is nowhere to send them but the directory — including
+    // through the paywall, whose ?next= would otherwise point at a doctor-less path.
+    const destination = target ? `/${action}/${target.id}` : '/doctors';
     if (!subscribed) {
-      openPaywall(action);
+      openPaywall(destination);
       return;
     }
-    setView(target ? action : 'doctors');
+    navigate(destination);
   };
 
   const handleSubscribe = async () => {
     await subscribe();
     onUserChange(prev => ({ ...prev, subscribed: true }));
-    // 'chat' and 'call' both need a specialist; fall back to the directory if there is none.
-    const needsSpecialist = afterSubscribe === 'chat' || afterSubscribe === 'call' || afterSubscribe === 'booking';
-    setView(needsSpecialist && !selectedSpecialist ? 'doctors' : afterSubscribe);
+    // No specialist check here: /chat, /call and /booking each guard themselves and fall
+    // back to the directory, so this only has to honour the destination.
+    // `replace` so that going back from the destination does not re-enter the paywall.
+    navigate(safeNext(searchParams.get('next')), { replace: true });
   };
 
   const handleBookAppointment = (specialist: Specialist) => {
     setSelectedSpecialist(specialist);
     if (!subscribed) {
-      openPaywall('booking');
+      openPaywall(`/booking/${specialist.id}`);
       return;
     }
-    setView('booking');
+    navigate(`/booking/${specialist.id}`);
   };
 
   const menuItems = [
     { icon: <Home className="w-4 h-4 text-emerald-500" />, iconBg: 'bg-emerald-50 dark:bg-emerald-900/30', title: t.header.howItWorks, subtitle: t.header.howItWorksSubtitle, action: goHome },
-    { icon: <Info className="w-4 h-4 text-blue-500" />, iconBg: 'bg-blue-50 dark:bg-blue-900/30', title: t.header.aboutMenuTitle, subtitle: t.header.aboutMenuSubtitle, action: () => setView('about') },
-    { icon: <HelpCircle className="w-4 h-4 text-purple-500" />, iconBg: 'bg-purple-50 dark:bg-purple-900/30', title: t.header.faq, subtitle: t.header.faqSubtitle, action: () => setView('faq') },
-    { icon: <CalendarClock className="w-4 h-4 text-blue-500" />, iconBg: 'bg-blue-50 dark:bg-blue-900/30', title: t.booking.upcomingTitle, subtitle: t.header.appointmentsSubtitle, action: () => setView('appointments') },
-    { icon: <Users className="w-4 h-4 text-orange-500" />, iconBg: 'bg-orange-50 dark:bg-orange-900/30', title: t.header.editProfile, subtitle: t.header.editProfileSubtitle, action: () => setView('profile') },
+    { icon: <Info className="w-4 h-4 text-blue-500" />, iconBg: 'bg-blue-50 dark:bg-blue-900/30', title: t.header.aboutMenuTitle, subtitle: t.header.aboutMenuSubtitle, action: () => navigate('/about') },
+    { icon: <HelpCircle className="w-4 h-4 text-purple-500" />, iconBg: 'bg-purple-50 dark:bg-purple-900/30', title: t.header.faq, subtitle: t.header.faqSubtitle, action: () => navigate('/faq') },
+    { icon: <CalendarClock className="w-4 h-4 text-blue-500" />, iconBg: 'bg-blue-50 dark:bg-blue-900/30', title: t.booking.upcomingTitle, subtitle: t.header.appointmentsSubtitle, action: () => navigate('/appointments') },
+    { icon: <Users className="w-4 h-4 text-orange-500" />, iconBg: 'bg-orange-50 dark:bg-orange-900/30', title: t.header.editProfile, subtitle: t.header.editProfileSubtitle, action: () => navigate('/profile') },
     { icon: <LogOut className="w-4 h-4 text-red-500" />, iconBg: 'bg-red-50 dark:bg-red-900/30', title: t.header.logout, subtitle: t.header.logoutSubtitle, action: onLogout },
   ];
 
@@ -220,7 +264,7 @@ const ParentApp: React.FC<ParentAppProps> = ({
           onAnalyze={handleAnalyze}
           isLoading={status === AnalysisStatus.ANALYZING}
           onBack={goHome}
-          onEditProfile={() => setView('profile')}
+          onEditProfile={() => navigate('/profile')}
           t={t}
         />
       )}
@@ -265,9 +309,9 @@ const ParentApp: React.FC<ParentAppProps> = ({
             onSpecialistSelect={setSelectedSpecialist}
             onTalkToDoctor={(s) => handleTalkToDoctor(s, 'call')}
             onBookAppointment={handleBookAppointment}
-            onFindFacilities={() => setView('facilities')}
+            onFindFacilities={() => navigate('/facilities')}
             // Subscribing from here returns to the results, with the list revealed in place.
-            onSubscribe={() => openPaywall('checker')}
+            onSubscribe={() => openPaywall('/checker')}
           />
         </div>
       )}
@@ -288,92 +332,139 @@ const ParentApp: React.FC<ParentAppProps> = ({
       return <FamilyProfileSetup existingProfile={null} onSave={handleProfileSave} t={t} />;
     }
 
-    switch (view) {
-      case 'about':
-        return <About onBack={goHome} language={language} t={t} />;
-      case 'faq':
-        return <FAQ onBack={goHome} t={t} />;
-      case 'profile':
-        return <FamilyProfileSetup existingProfile={profile} onSave={handleProfileSave} onCancel={goHome} t={t} />;
-      case 'checker':
-        return renderChecker();
-      case 'vaccines':
-        return <VaccinationSchedule profile={profile} t={t} onBack={goHome} onEditProfile={() => setView('profile')} />;
-      case 'facilities':
-        return <FacilityFinder t={t} onBack={goHome} />;
-      case 'subscribe':
-        return <SubscriptionPaywall t={t} onSubscribe={handleSubscribe} onCancel={goHome} />;
-      case 'doctors':
-        return (
-          <DoctorDirectory
-            t={t}
-            heading={t.home.cards.doctor}
-            onBack={goHome}
-            selectedSpecialist={selectedSpecialist}
-            onSpecialistSelect={setSelectedSpecialist}
-            renderAction={(specialist) => (
-              <>
-                <button
-                  onClick={() => handleBookAppointment(specialist)}
-                  className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-all shadow-md shadow-blue-500/20 active:scale-[0.95]"
-                >
-                  <CalendarClock className="w-3.5 h-3.5" />
-                  {t.booking.bookAppointment}
-                </button>
-                <button
-                  onClick={() => handleTalkToDoctor(specialist, 'chat')}
-                  className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-all"
-                >
-                  <PhoneCall className="w-3.5 h-3.5" />
-                  {t.results.talkToDoctor}
-                </button>
-              </>
-            )}
-          />
-        );
-      case 'booking':
-        // Guarded: 'booking' is only ever reached through handleBookAppointment, which
-        // always sets a specialist first. The fallback keeps the type honest anyway.
-        return selectedSpecialist ? (
-          <BookingCalendar
-            specialist={selectedSpecialist}
-            profile={profile}
-            t={t}
-            onBack={() => setView('doctors')}
-            onBooked={() => setView('appointments')}
-          />
-        ) : null;
-      case 'appointments':
-        return <AppointmentList t={t} viewer="parent" onBack={goHome} />;
-      case 'chat':
-        // returning from the doctor keeps an existing analysis on screen instead of discarding it
-        return selectedSpecialist && profile.children[0] ? (
-          <DoctorChat
-            t={t}
-            specialist={selectedSpecialist}
-            childId={profile.children[0].id}
-            onStartCall={() => setView('call')}
-            onBack={() => setView(status === AnalysisStatus.SUCCESS ? 'checker' : 'home')}
-          />
-        ) : null;
-      case 'call':
-        return selectedSpecialist ? (
-          <DoctorCall t={t} specialist={selectedSpecialist} onEnd={() => setView('chat')} />
-        ) : null;
-      case 'home':
-      default:
-        return (
-          <Dashboard
-            profile={profile}
-            parentName={user.name}
-            onCheckSymptoms={() => { resetChecker(); setView('checker'); }}
-            onOpenVaccines={() => setView('vaccines')}
-            onTalkToDoctor={() => handleTalkToDoctor(null, 'chat')}
-            onOpenFacilities={() => setView('facilities')}
-            t={t}
-          />
-        );
-    }
+    const family = profile;
+
+    return (
+      <Routes>
+        <Route path="/about" element={<About onBack={goHome} language={language} t={t} />} />
+        <Route path="/faq" element={<FAQ onBack={goHome} t={t} />} />
+        <Route
+          path="/profile"
+          element={<FamilyProfileSetup existingProfile={family} onSave={handleProfileSave} onCancel={goHome} t={t} />}
+        />
+        <Route path="/checker" element={renderChecker()} />
+        <Route
+          path="/vaccines"
+          element={<VaccinationSchedule profile={family} t={t} onBack={goHome} onEditProfile={() => navigate('/profile')} />}
+        />
+        <Route path="/facilities" element={<FacilityFinder t={t} onBack={goHome} />} />
+        <Route
+          path="/subscribe"
+          element={<SubscriptionPaywall t={t} onSubscribe={handleSubscribe} onCancel={goHome} />}
+        />
+        <Route
+          path="/doctors"
+          element={
+            <Premium subscribed={subscribed}>
+            <DoctorDirectory
+              t={t}
+              heading={t.home.cards.doctor}
+              onBack={goHome}
+              selectedSpecialist={selectedSpecialist}
+              onSpecialistSelect={setSelectedSpecialist}
+              renderAction={(specialist) => (
+                <>
+                  <button
+                    onClick={() => handleBookAppointment(specialist)}
+                    className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-all shadow-md shadow-blue-500/20 active:scale-[0.95]"
+                  >
+                    <CalendarClock className="w-3.5 h-3.5" />
+                    {t.booking.bookAppointment}
+                  </button>
+                  <button
+                    onClick={() => handleTalkToDoctor(specialist, 'chat')}
+                    className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-all"
+                  >
+                    <PhoneCall className="w-3.5 h-3.5" />
+                    {t.results.talkToDoctor}
+                  </button>
+                </>
+              )}
+            />
+            </Premium>
+          }
+        />
+        <Route
+          path="/booking/:doctorId"
+          element={
+            <SpecialistRoute
+              subscribed={subscribed}
+              specialist={selectedSpecialist}
+              render={(specialist) => (
+                <BookingCalendar
+                  specialist={specialist}
+                  profile={family}
+                  t={t}
+                  onBack={() => navigate('/doctors')}
+                  // `replace` so Back cannot return to a calendar whose slot is now taken —
+                  // the (doctor_id, starts_at) unique index would reject the rebook with a
+                  // confusing error rather than an explanation.
+                  onBooked={() => navigate('/appointments', { replace: true })}
+                />
+              )}
+            />
+          }
+        />
+        <Route path="/appointments" element={<AppointmentList t={t} viewer="parent" onBack={goHome} />} />
+        <Route
+          path="/chat/:doctorId"
+          element={
+            <SpecialistRoute
+              subscribed={subscribed}
+              specialist={selectedSpecialist}
+              render={(specialist) =>
+                family.children[0] ? (
+                  <DoctorChat
+                    t={t}
+                    specialist={specialist}
+                    childId={family.children[0].id}
+                    onStartCall={() => navigate(`/call/${specialist.id}`)}
+                    // Kept as an explicit destination rather than navigate(-1): ending a call
+                    // replaces /call with /chat, so the previous history entry is /chat too
+                    // and Back would appear to do nothing. The condition is the original
+                    // rule — don't discard an analysis the parent is still reading.
+                    onBack={() => navigate(status === AnalysisStatus.SUCCESS ? '/checker' : '/')}
+                  />
+                ) : null
+              }
+            />
+          }
+        />
+        <Route
+          path="/call/:doctorId"
+          element={
+            <SpecialistRoute
+              subscribed={subscribed}
+              specialist={selectedSpecialist}
+              render={(specialist) => (
+                <DoctorCall
+                  t={t}
+                  specialist={specialist}
+                  // `replace` so that backing out of chat does not re-enter the call.
+                  onEnd={() => navigate(`/chat/${specialist.id}`, { replace: true })}
+                />
+              )}
+            />
+          }
+        />
+        <Route
+          path="/"
+          element={
+            <Dashboard
+              profile={family}
+              parentName={user.name}
+              onCheckSymptoms={() => { resetChecker(); navigate('/checker'); }}
+              onOpenVaccines={() => navigate('/vaccines')}
+              onTalkToDoctor={() => handleTalkToDoctor(null, 'chat')}
+              onOpenFacilities={() => navigate('/facilities')}
+              t={t}
+            />
+          }
+        />
+        {/* Also catches doctor/admin URLs left over from a previous session in this tab. */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    );
   };
 
   return (

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import AuthScreen from './components/AuthScreen';
 import ParentApp from './components/ParentApp';
@@ -13,11 +14,13 @@ import { TRANSLATIONS } from './constants/translations';
  * App owns only what every role shares: the session, the UI language, the theme, and the
  * page frame. Everything below the header belongs to a role shell.
  *
- * There is no router. Each shell keeps its own `ViewState` union, which is exactly the
- * shape you would later convert into three route trees — one at a time — if URLs ever
- * become worth the dependency.
+ * Routing lives one level down: each shell mounts its own `<Routes>`, because only one
+ * role's tree is ever rendered and a doctor has no business owning a `/checker` path.
+ * App does not route — it decides *which* route tree exists.
  */
 const App: React.FC = () => {
+  const navigate = useNavigate();
+
   // null while the session is still being restored — avoids flashing the login screen
   // at an already signed-in user on every reload.
   const [booting, setBooting] = useState(true);
@@ -57,6 +60,9 @@ const App: React.FC = () => {
   const handleLogout = async () => {
     await logout();
     setUser(null);
+    // Without this the next sign-in resumes at whatever deep URL the previous session left
+    // behind — and that URL may not even exist in the next user's role tree.
+    navigate('/', { replace: true });
   };
 
   const renderBody = () => {

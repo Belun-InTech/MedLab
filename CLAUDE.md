@@ -56,13 +56,30 @@ action, for *both* tiers, is the facility finder — free, and the right advice 
 sign. Subscribers get the call/chat button in addition to it, never instead of it. Do not
 "restore" an emergency bypass here: it was removed on purpose.
 
-`ParentApp` tracks `afterSubscribe: ViewState` so the paywall returns the user wherever
-they were headed — back to the results screen with the list revealed, or straight into the
-booking calendar. Route new premium entry points through `openPaywall(destination)`.
+The paywall returns the user wherever they were headed — back to the results screen with
+the list revealed, or straight into the booking calendar — by carrying the destination in
+the URL as `/subscribe?next=<encoded path>`, not in state. `handleSubscribe` navigates
+there with `replace`, so Back never re-enters the paywall. `next` is sanitised to a
+same-origin path (`//evil.com` is protocol-relative, not a route). Route new premium entry
+points through `openPaywall('/path')`.
+
+**The premium routes also deny in their own right.** `/doctors`, `/booking/:doctorId`,
+`/chat/:doctorId` and `/call/:doctorId` re-check `subscribed` in the route guard and bounce
+to the paywall. Before routing this was unnecessary — every entry point checked first, so
+an unsubscribed parent could not reach the directory at all. A typeable URL removes that
+funnel, and `DoctorDirectory` shows exactly the names, photos, facilities, phones and
+ratings `DoctorUpsell` exists to withhold. Do not drop that guard when adding a route.
 
 ## Layout
 
-Single repo, single origin. **There is no `src/` directory** and **no router**.
+Single repo, single origin. **There is no `src/` directory.**
+
+Routing is `react-router-dom` v7 in **declarative `<Routes>` mode** — no
+`createBrowserRouter`, no loaders or actions (data fetching stays in `services/`), and
+therefore no `<ScrollRestoration>`. `<BrowserRouter>` is in `index.tsx`. Each role shell
+owns its own route table and they share one path space, because **only one shell is ever
+mounted**: `App.tsx` still branches on `user.role`, so the session decides which tree
+exists and the URL never does.
 
 ```
 App.tsx                  boot + session + theme + the role branch, nothing else
@@ -71,7 +88,8 @@ services/*.ts            fetch wrapper + one client per domain
 constants/*.ts           translations, vaccine schedule, facilities re-export
 shared/                  types.ts + facilities.ts — imported by BOTH browser and server
 server/src/              Express 5 API
-  index.ts               router mounts; the /api 404 fallback must stay LAST
+  index.ts               router mounts; the /api 404 fallback must stay LAST, and in prod
+                         the SPA catch-all sits after it and must stay GET-only
   env.ts db/ lib/ routes/ ai/
 server/migrations/       drizzle-kit output
 Dockerfile               two-stage production image (build → runtime), used by Dokploy
@@ -134,6 +152,25 @@ bloat. `SPA_DIR` is not needed: `/app/dist-server/server/src/index.js` resolves
 
 These are unusual enough that new code gets them wrong by default.
 
+- **Routing rules new code gets wrong by default.**
+  1. **Object-valued route params are never refetched by id.** `/booking/:doctorId`,
+     `/chat/:doctorId`, `/call/:doctorId` and `/consult/:appointmentId` need an object that
+     lives in memory; the id is in the path only to keep the URL honest and to catch a
+     hand-edited one. A cold deep link, a reload or a mismatched id redirects to the list.
+  2. **Never `navigate(-1)`.** Every back target here is known. Ending a call *replaces*
+     `/call` with `/chat`, so the previous entry is `/chat` too and `-1` would appear to do
+     nothing; from a deep link it leaves the app entirely.
+  3. **`element` props are constructed eagerly on every render of the shell**, including
+     for routes that do not match. Anything dereferencing `profile` must sit behind a gate
+     or inside a callback, and route wrapper components must live at **module scope** —
+     defined inline they are a new component type each render, which remounts the child and
+     would destroy an open chat thread.
+  4. **The onboarding and doctor-approval gates render *instead of* `<Routes>`**, they are
+     not URLs. `/setup` and `/pending` would imply navigability and would each need their
+     own return-path plumbing; the early return keeps the target URL untouched, so
+     finishing setup lands the parent where they were headed.
+  5. Every shell ends with `<Route path="*">` → its home, which also self-heals a URL left
+     over from another role in the same tab.
 - **Services return result objects, they do not throw.** Anything a form can fail at
   returns `{status:'ok'|'error', reason}`; reads return plain values. `ApiError` is caught
   in the service layer, never at a component boundary.
@@ -241,6 +278,29 @@ Constraints that carry real weight:
 `TIMESTAMP` using the *process* timezone and the same appointment reads differently in a
 UTC container and on a UTC+9 laptop.
 
+## Client routes
+
+One path space, one shell mounted at a time. `/about` and `/faq` exist in both the parent
+and doctor tables and render that shell's own version.
+
+```
+parent   /  ·  /about  ·  /faq  ·  /profile  ·  /checker  ·  /vaccines  ·  /facilities
+         /appointments  ·  /subscribe?next=
+         /doctors  ·  /booking/:doctorId  ·  /chat/:doctorId  ·  /call/:doctorId   ← premium
+doctor   /  ·  /about  ·  /faq  ·  /availability  ·  /schedule  ·  /consult/:appointmentId
+admin    /verification  ·  /stats            (/ redirects to /verification)
+every shell  *  →  its home, replace
+```
+
+`/checker` is **one route with two faces**: the form, and the results once `status` is
+`SUCCESS`. `status` and `result` stay in memory — a `/checker/results` URL could not be
+restored without re-running the AI analysis, so do not add one. This works because
+`ParentApp` is mounted by the role branch rather than by a route, so moving between paths
+never unmounts it and an analysis survives a trip to the facility finder and back.
+
+Client route names must not collide with anything in `dist/` (`assets/`), which
+`express.static` serves before the catch-all.
+
 ## API surface
 
 ```
@@ -268,4 +328,10 @@ GET    /api/health
    `/:id` and `/:id/slots` are open to any signed-in user**, so hiding the directory from
    unsubscribed parents is a product boundary, not a security one — the data is one fetch
    away. Booking itself is genuinely enforced. Closing this means adding `requireSubscribed`
-   to those three routes and giving the teaser a count-only endpoint to call instead.
+   to those three routes and giving the teaser a count-only endpoint to call instead. The
+   client-side `Premium` route guard is the same kind of boundary — product, not security.
+5. **Deep links to `/booking`, `/chat`, `/call` and `/consult` redirect to their list**
+   rather than restoring, because the object they need is only in memory. Making them
+   genuinely refresh-proof means refetching by id in those four components, using the
+   existing `GET /api/doctors/:id` and `GET /api/appointments/:id`, plus a loading and a
+   not-found state for each.

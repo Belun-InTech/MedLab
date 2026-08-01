@@ -57,9 +57,11 @@ MedLab/
 └── dist/                 # built SPA
 ```
 
-There is no router: `App.tsx` branches on the signed-in role into one of three shells,
-each of which owns its own view state and header menu. See `CLAUDE.md` for the reasoning
-and for the conventions this codebase expects.
+`App.tsx` branches on the signed-in role into one of three shells, each of which owns its
+own `<Routes>` table and header menu — the session picks the shell, never the URL.
+Routing is `react-router-dom` v7 in declarative mode; deep links work because Vite's dev
+server and Express's production catch-all both serve `index.html`. See `CLAUDE.md` for the
+reasoning and for the conventions this codebase expects.
 
 **In dev** Vite serves the SPA on :3000 and proxies `/api` to Express on :3001.
 **In production** `npm start` runs Express alone, serving `dist/` and `/api` from one port.

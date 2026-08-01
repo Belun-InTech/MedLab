@@ -4,6 +4,7 @@
  * menu rather than adding role checks to the parent's switch.
  */
 import React, { useState } from 'react';
+import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { BadgeCheck, CalendarClock, CalendarDays, ChevronRight, HelpCircle, Home, Info, LogOut, Languages, MapPin, Phone, Star } from 'lucide-react';
 import Header from './Header';
 import About from './About';
@@ -16,8 +17,6 @@ import DoctorAppointmentDetail from './DoctorAppointmentDetail';
 import { MAIN_CLASS, ShellProps } from './shell';
 import { Appointment, DoctorProfile } from '../shared/types';
 
-type DoctorView = 'home' | 'about' | 'faq' | 'availability' | 'schedule' | 'consult';
-
 const DoctorApp: React.FC<ShellProps> = ({
   user,
   language,
@@ -27,7 +26,7 @@ const DoctorApp: React.FC<ShellProps> = ({
   onToggleDarkMode,
   onLogout,
 }) => {
-  const [view, setView] = useState<DoctorView>('home');
+  const navigate = useNavigate();
   // Kept locally so the profile card reflects a slot-length change immediately, without
   // re-fetching the whole session just to move one number.
   const [slotMinutes, setSlotMinutes] = useState(user.doctor?.slotMinutes ?? 30);
@@ -35,14 +34,14 @@ const DoctorApp: React.FC<ShellProps> = ({
   const doctor = user.doctor;
   const td = t.doctorPortal;
 
-  const goHome = () => setView('home');
+  const goHome = () => navigate('/');
 
   const menuItems = [
     { icon: <Home className="w-4 h-4 text-emerald-500" />, iconBg: 'bg-emerald-50 dark:bg-emerald-900/30', title: td.portalTitle, subtitle: td.portalSubtitle, action: goHome },
-    { icon: <CalendarDays className="w-4 h-4 text-emerald-500" />, iconBg: 'bg-emerald-50 dark:bg-emerald-900/30', title: td.scheduleTitle, subtitle: td.scheduleMenuSubtitle, action: () => setView('schedule') },
-    { icon: <CalendarClock className="w-4 h-4 text-blue-500" />, iconBg: 'bg-blue-50 dark:bg-blue-900/30', title: td.availabilityTitle, subtitle: td.availabilityMenuSubtitle, action: () => setView('availability') },
-    { icon: <Info className="w-4 h-4 text-blue-500" />, iconBg: 'bg-blue-50 dark:bg-blue-900/30', title: t.header.aboutMenuTitle, subtitle: t.header.aboutMenuSubtitle, action: () => setView('about') },
-    { icon: <HelpCircle className="w-4 h-4 text-purple-500" />, iconBg: 'bg-purple-50 dark:bg-purple-900/30', title: t.header.faq, subtitle: t.header.faqSubtitle, action: () => setView('faq') },
+    { icon: <CalendarDays className="w-4 h-4 text-emerald-500" />, iconBg: 'bg-emerald-50 dark:bg-emerald-900/30', title: td.scheduleTitle, subtitle: td.scheduleMenuSubtitle, action: () => navigate('/schedule') },
+    { icon: <CalendarClock className="w-4 h-4 text-blue-500" />, iconBg: 'bg-blue-50 dark:bg-blue-900/30', title: td.availabilityTitle, subtitle: td.availabilityMenuSubtitle, action: () => navigate('/availability') },
+    { icon: <Info className="w-4 h-4 text-blue-500" />, iconBg: 'bg-blue-50 dark:bg-blue-900/30', title: t.header.aboutMenuTitle, subtitle: t.header.aboutMenuSubtitle, action: () => navigate('/about') },
+    { icon: <HelpCircle className="w-4 h-4 text-purple-500" />, iconBg: 'bg-purple-50 dark:bg-purple-900/30', title: t.header.faq, subtitle: t.header.faqSubtitle, action: () => navigate('/faq') },
     { icon: <LogOut className="w-4 h-4 text-red-500" />, iconBg: 'bg-red-50 dark:bg-red-900/30', title: t.header.logout, subtitle: t.header.logoutSubtitle, action: onLogout },
   ];
 
@@ -61,38 +60,46 @@ const DoctorApp: React.FC<ShellProps> = ({
       );
     }
 
-    switch (view) {
-      case 'about':
-        return <About onBack={goHome} language={language} t={t} />;
-      case 'faq':
-        return <FAQ onBack={goHome} t={t} />;
-      case 'availability':
-        return <DoctorAvailabilityEditor t={t} onBack={goHome} onSaved={setSlotMinutes} />;
-      case 'schedule':
-        return (
-          <AppointmentList
-            t={t}
-            viewer="doctor"
-            onBack={goHome}
-            onOpen={(appointment) => { setConsult(appointment); setView('consult'); }}
-          />
-        );
-      case 'consult':
-        return consult ? (
-          <DoctorAppointmentDetail appointment={consult} t={t} onBack={() => setView('schedule')} />
-        ) : null;
-      case 'home':
-      default:
-        return (
-          <DoctorHome
-            doctor={{ ...doctor, slotMinutes }}
-            name={user.name}
-            t={t}
-            onOpenAvailability={() => setView('availability')}
-            onOpenSchedule={() => setView('schedule')}
-          />
-        );
-    }
+    return (
+      <Routes>
+        <Route path="/about" element={<About onBack={goHome} language={language} t={t} />} />
+        <Route path="/faq" element={<FAQ onBack={goHome} t={t} />} />
+        <Route
+          path="/availability"
+          element={<DoctorAvailabilityEditor t={t} onBack={goHome} onSaved={setSlotMinutes} />}
+        />
+        <Route
+          path="/schedule"
+          element={
+            <AppointmentList
+              t={t}
+              viewer="doctor"
+              onBack={goHome}
+              onOpen={(appointment) => { setConsult(appointment); navigate(`/consult/${appointment.id}`); }}
+            />
+          }
+        />
+        <Route
+          path="/consult/:appointmentId"
+          element={
+            <ConsultRoute appointment={consult} t={t} onBack={() => navigate('/schedule')} />
+          }
+        />
+        <Route
+          path="/"
+          element={
+            <DoctorHome
+              doctor={{ ...doctor, slotMinutes }}
+              name={user.name}
+              t={t}
+              onOpenAvailability={() => navigate('/availability')}
+              onOpenSchedule={() => navigate('/schedule')}
+            />
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    );
   };
 
   return (
@@ -108,6 +115,24 @@ const DoctorApp: React.FC<ShellProps> = ({
       />
       <main className={MAIN_CLASS}>{renderContent()}</main>
     </>
+  );
+};
+
+/**
+ * The consultation lives in memory, not in the URL — the id in the path is only there to
+ * make the URL honest. A cold load (or back/forward onto a stale id) has nothing to render,
+ * so it returns to the schedule rather than refetching. Deliberate: see CLAUDE.md.
+ */
+const ConsultRoute: React.FC<{
+  appointment: Appointment | null;
+  t: any;
+  onBack: () => void;
+}> = ({ appointment, t, onBack }) => {
+  const { appointmentId } = useParams();
+  return appointment && appointment.id === appointmentId ? (
+    <DoctorAppointmentDetail appointment={appointment} t={t} onBack={onBack} />
+  ) : (
+    <Navigate to="/schedule" replace />
   );
 };
 
