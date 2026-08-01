@@ -74,6 +74,7 @@ server/src/              Express 5 API
   index.ts               router mounts; the /api 404 fallback must stay LAST
   env.ts db/ lib/ routes/ ai/
 server/migrations/       drizzle-kit output
+Dockerfile               two-stage production image (build → runtime), used by Dokploy
 ```
 
 Vite proxies `/api` → `localhost:${API_PORT}` in dev; in production the same Express
@@ -108,6 +109,26 @@ Password for every seeded account: **`medlab123`**
   is not empty on stage. Do not approve him in the seed.
 
 Parents are created through the UI; there are no seeded parent accounts.
+
+## Deploying (Dokploy)
+
+Deployed as **one Dokploy Application built from `Dockerfile`** plus a **separate Dokploy
+MySQL 8.4 database**, both on `dokploy-network`. Push to `main` → GitHub webhook →
+rebuild. `docker-compose.yml` is for local MySQL only and is never deployed.
+
+The runtime image keeps the full `node_modules`, `server/src` and `server/migrations` so
+`db:migrate` and `db:seed` can be run from the Dokploy terminal — that is deliberate, not
+bloat. `SPA_DIR` is not needed: `/app/dist-server/server/src/index.js` resolves
+`../../../dist` to `/app/dist` correctly.
+
+| Setting | Value |
+|---|---|
+| Build type | Dockerfile, path `Dockerfile`, context `.` |
+| Container port for the domain | `3001` |
+| HTTPS | **required** — `issueSession` sets `secure: true` when `NODE_ENV=production`, so login silently fails over plain HTTP |
+| `DATABASE_URL` | points at the Dokploy MySQL *internal* hostname on port **3306**, not 3307 |
+| `AI_PROVIDER` | `opencode` — there is no Ollama on the VPS |
+| `RUN_MIGRATIONS` | unset by default. Set to `true` for the one deploy carrying a schema change, then unset. Migrations are still never applied at boot by default |
 
 ## Conventions worth stating
 
