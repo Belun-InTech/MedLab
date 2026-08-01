@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowRight, Mail, Lock, User as UserIcon, Calendar, Globe, Stethoscope } from 'lucide-react';
 import { signup, login, isAdult, SessionUser } from '../services/authService';
 import DoctorSignupForm from './DoctorSignupForm';
+import Logo from './Logo';
 import { Language } from '../shared/types';
 
 interface AuthScreenProps {
@@ -101,23 +102,9 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthenticated, currentLang, o
       </div>
 
       <div className="text-center mb-8">
-        <div className="w-20 h-20 bg-blue-100 dark:bg-blue-900/30 rounded-3xl flex items-center justify-center mx-auto mb-6 rotate-6">
-          <svg className="w-10 h-10 -rotate-6" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="authLogoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#2563eb" />
-                <stop offset="100%" stopColor="#4f46e5" />
-              </linearGradient>
-            </defs>
-            <path
-              d="M 12 75 L 28 25 L 42 60 L 52 15 L 62 85 L 72 50 L 88 25 L 92 75"
-              stroke="url(#authLogoGradient)"
-              strokeWidth="8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
+        {/* No tile behind it: the mark is full-colour and its dominant blue is the tile's blue.
+            alt is set here because, unlike the header, nothing beside it names the brand. */}
+        <Logo className="w-20 h-20 mx-auto mb-6" alt="Médiku Labarik" />
         <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-2">{ta.welcomeTitle}</h2>
         <p className="text-slate-500 dark:text-slate-400">
           {mode === 'doctor' ? ta.doctorSignupSubtitle : mode === 'login' ? ta.loginSubtitle : ta.signupSubtitle}

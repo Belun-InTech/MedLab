@@ -3,6 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      The favicon can only follow the OS preference — it cannot see the in-app `.dark`
+      class, so it will not track the header toggle. That is inherent to favicons, not a
+      bug to fix. Order matters: on a dark-preferring OS the second link wins; otherwise
+      it does not match and the first applies.
+    -->
+    <link rel="icon" type="image/png" href="/medlab-light.png" />
+    <link rel="icon" type="image/png" href="/medlab-dark.png" media="(prefers-color-scheme: dark)" />
+    <link rel="apple-touch-icon" href="/medlab-light.png" />
     <title>Médiku Labarik (MédLab) — Child Health AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>

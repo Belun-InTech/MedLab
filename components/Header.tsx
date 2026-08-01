@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Menu, Globe, Sun, Moon } from 'lucide-react';
 import { Language } from '../shared/types';
 import { HeaderMenuItem } from './shell';
+import Logo from './Logo';
 
 interface HeaderProps {
   onLogoClick: () => void;
@@ -51,21 +52,8 @@ const Header: React.FC<HeaderProps> = ({
             onClick={onLogoClick}
             className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity focus:outline-none flex-shrink-0"
           >
-            <svg className="w-8 h-8 sm:w-10 h-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-               <defs>
-                 <linearGradient id="headerLogoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                   <stop offset="0%" stopColor="#2563eb" />
-                   <stop offset="100%" stopColor="#4f46e5" />
-                 </linearGradient>
-               </defs>
-               <path
-                 d="M 12 75 L 28 25 L 42 60 L 52 15 L 62 85 L 72 50 L 88 25 L 92 75"
-                 stroke="url(#headerLogoGradient)"
-                 strokeWidth="8"
-                 strokeLinecap="round"
-                 strokeLinejoin="round"
-               />
-            </svg>
+            {/* alt is left empty on purpose: the wordmark right next to it already names the brand */}
+            <Logo className="w-9 h-9 sm:w-10 sm:h-10" />
             <span className="text-xl sm:text-2xl text-slate-900 dark:text-white tracking-tight font-['Baumans']">
               Médiku <span className="text-blue-600">Labarik</span>
             </span>

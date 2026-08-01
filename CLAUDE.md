@@ -84,6 +84,9 @@ exists and the URL never does.
 ```
 App.tsx                  boot + session + theme + the role branch, nothing else
 components/*.tsx         flat, PascalCase, one default-exported React.FC each
+public/                  static assets, copied verbatim into dist/ by Vite (default
+                         publicDir — vite.config.ts sets none) and served by
+                         express.static ahead of the SPA catch-all. Holds the brand mark
 services/*.ts            fetch wrapper + one client per domain
 constants/*.ts           translations, vaccine schedule, facilities re-export
 shared/                  types.ts + facilities.ts — imported by BOTH browser and server
@@ -189,6 +192,15 @@ These are unusual enough that new code gets them wrong by default.
 - **Ownership is always re-derived server-side.** `ownedChild()` (`routes/children.ts`) for
   parents, `doctorAppointmentAccess()` (`lib/access.ts`) for doctors. A client-supplied
   filter is a client-supplied authorisation decision.
+- **The logo swaps by Tailwind `dark:` class, not by the `darkMode` prop.**
+  `components/Logo.tsx` renders *both* `public/medlab-light.png` and `public/medlab-dark.png`
+  and hides one. It is not a `src` ternary, because `AuthScreen` renders before `ShellProps`
+  exists in `App.tsx` and so never receives `darkMode` — the signed-out tree would need a new
+  prop threaded through it for nothing. It is not `<picture>` / `prefers-color-scheme`
+  either: dark mode here is a `.dark` class backed by `localStorage['medlab_dark_mode']`, so
+  a media query follows the OS and desyncs the moment a user hits the header toggle. The
+  favicon in `index.html` *does* use `prefers-color-scheme`, because a `<link rel=icon>` has
+  no other option — that one really is OS-only and is not a bug.
 - **Tailwind via CDN `<script>`** in `index.html`. No PostCSS, no build plugin, no CSS
   files at all. Repeated class strings are hoisted to file-local consts.
   `animate-fade-in` / `animate-shake` are used everywhere and **defined nowhere** — they
@@ -298,7 +310,8 @@ restored without re-running the AI analysis, so do not add one. This works becau
 `ParentApp` is mounted by the role branch rather than by a route, so moving between paths
 never unmounts it and an analysis survives a trip to the facility finder and back.
 
-Client route names must not collide with anything in `dist/` (`assets/`), which
+Client route names must not collide with anything in `dist/` (`assets/`, plus everything
+copied out of `public/` — currently `medlab-light.png` and `medlab-dark.png`), which
 `express.static` serves before the catch-all.
 
 ## API surface
