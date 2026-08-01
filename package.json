@@ -13,9 +13,11 @@
     "start": "NODE_ENV=production node dist-server/server/src/index.js",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:seed": "tsx server/src/db/seed.ts",
     "db:studio": "drizzle-kit studio",
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
+    "test": "node --import tsx --test server/src/**/*.test.ts",
     "typecheck": "tsc --noEmit && tsc -p server/tsconfig.json --noEmit",
     "preview": "vite preview"
   },

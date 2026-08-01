@@ -7,12 +7,26 @@ MédLab helps parents and caregivers of children (from the first month of life):
 - **Check symptoms** for a child — age-aware in months, with IMCI danger-sign screening — by text or photo, with AI analysis in **Tetum, English, or Indonesian**
 - **Follow the EPI vaccination schedule** for each child with due/overdue status
 - **Find health facilities** across Timor-Leste's municipalities
-- **Chat or call a doctor** (simulated in this demo) behind a mocked Premium subscription
+- **Book a real doctor** — browse verified doctors filtered by specialty and spoken
+  language, pick a slot from their published working hours, and choose whether to share
+  the child's health record with them, behind a mocked Premium subscription
+- **Chat or call a doctor** (simulated in this demo)
+
+Doctors and administrators have their own accounts and their own portals:
+
+- A **doctor** registers with a licence number, specialty and facility, waits for admin
+  approval, publishes weekly working hours, and sees their bookings. On a booked consult
+  they can read that child's AI symptom history and vaccination gaps — but only if the
+  parent shared them, and only for that one child — then write a clinical note that lands
+  on the child's timeline next to the AI's guess.
+- An **administrator** reviews doctor registrations and sees programme counters.
 
 ## Flow
 
 ```
-Sign up / Log in  →  Register your children  →  Pick which child  →  Describe symptoms  →  Results
+Parent:  Sign up  →  Register children  →  Pick a child  →  Symptoms  →  Results  →  Book a doctor
+Doctor:  Register  →  Await approval  →  Publish hours  →  Take bookings  →  Read record  →  Write note
+Admin:   Verification queue  →  Approve / reject / suspend
 ```
 
 Only a parent or guardian can register: sign-up asks for a date of birth and requires the
@@ -27,18 +41,25 @@ the browser.
 
 ```
 MedLab/
-├── shared/types.ts       # imported by BOTH the browser and the server
-├── components/           # React SPA
-├── services/             # thin API clients (api.ts, authService, profileService, analysisService)
+├── shared/               # types.ts + facilities.ts — imported by BOTH browser and server
+├── App.tsx               # boot, session, theme, and the parent/doctor/admin branch
+├── components/           # React SPA — one shell per role, then flat screens
+├── services/             # thin API clients (api, auth, profile, analysis, doctor,
+│                         #   appointment, admin, chat)
 ├── server/
 │   ├── src/
-│   │   ├── db/schema.ts  # Drizzle → MySQL
+│   │   ├── db/           # schema.ts (Drizzle → MySQL) + seed.ts
+│   │   ├── lib/          # auth guards, access.ts (consent), schedule.ts (slots)
 │   │   ├── ai/           # prompt + JSON schema + provider switch (ollama | opencode)
-│   │   ├── routes/       # auth, children, consultations
+│   │   ├── routes/       # auth, children, consultations, doctors, appointments, admin
 │   │   └── index.ts      # Express; serves dist/ in production
 │   └── migrations/       # generated SQL, applied with drizzle-kit
 └── dist/                 # built SPA
 ```
+
+There is no router: `App.tsx` branches on the signed-in role into one of three shells,
+each of which owns its own view state and header menu. See `CLAUDE.md` for the reasoning
+and for the conventions this codebase expects.
 
 **In dev** Vite serves the SPA on :3000 and proxies `/api` to Express on :3001.
 **In production** `npm start` runs Express alone, serving `dist/` and `/api` from one port.
@@ -47,11 +68,15 @@ MedLab/
 
 | Table | Holds |
 |---|---|
-| `users` | The parent account — bcrypt password hash, DOB (backs the 18+ check), mocked `subscribed` flag |
+| `users` | Every account — bcrypt password hash, DOB (backs the 18+ check), `role` (parent/doctor/admin), mocked `subscribed` flag |
 | `children` | One row per child, cascade-deleted with the parent |
 | `child_vaccinations` | One row per EPI dose actually given; `UNIQUE(child_id, dose_id)` makes the toggle idempotent |
 | `consultations` | Every symptom check and its verdict — the child health timeline. Records provider/model/latency for auditing |
 | `consultation_conditions` | The 3 ranked conditions per consultation, normalised so you can query "most common conditions this quarter". Medications stay JSON — always read with their condition, never queried alone |
+| `doctor_profiles` | The clinical half of a doctor account, keyed by `user_id` so the 1:1 is enforced by the schema. Licence, specialty, facility, spoken languages, verification status |
+| `doctor_availability_rules` | Weekly working hours as weekday + minutes-from-midnight, Dili wall-clock. Slots are expanded from these on read, never materialised |
+| `appointments` | A booked slot. `UNIQUE(doctor_id, starts_at)` is what actually prevents double-booking; `shares_history` is the parent's per-appointment consent |
+| `clinical_notes` | The doctor's verdict, one per appointment. This is the row that sits next to the AI's guess on the child's timeline |
 
 The uploaded **photo is deliberately not stored** (only a `had_image` flag) — base64 blobs
 don't belong in MySQL. The EPI schedule itself stays a constant in code: it's national
@@ -66,10 +91,16 @@ cp .env.example .env      # then edit as needed
 npm install
 npm run db:up             # MySQL 8.4 in Docker on :3307
 npm run db:migrate        # apply migrations
+npm run db:seed           # demo doctors + admin (idempotent)
 npm run dev               # Vite :3000 + API :3001
 ```
 
 Open http://localhost:3000.
+
+**Demo accounts** — password `medlab123` for all of them:
+`admin@medlab.tl` (admin) · `budi.santoso@medlab.tl` and five others (approved doctors) ·
+`marcos.guterres@medlab.tl` (left **pending** on purpose, so the verification queue is not
+empty on stage). Parents are created through the sign-up screen.
 
 ### AI provider
 
@@ -149,23 +180,44 @@ Single container: point it at a MySQL instance via `DATABASE_URL`, set `JWT_SECR
 |---|---|
 | `npm run dev` | Vite + API together |
 | `npm run typecheck` | Typechecks frontend and server |
+| `npm test` | `node --test` via tsx — covers the slot arithmetic |
 | `npm run db:generate` | Generate a migration from schema changes |
 | `npm run db:migrate` | Apply migrations |
+| `npm run db:seed` | Demo doctors and admin; idempotent |
 | `npm run db:studio` | Drizzle Studio |
 | `npm run db:up` / `db:down` | MySQL container up/down |
 
 ## Demo notes — what is real and what is not
 
-**Real:** accounts with bcrypt-hashed passwords, JWT sessions in an httpOnly cookie,
-MySQL persistence, per-user data isolation (verified: one account cannot read or modify
+**Real:** accounts with bcrypt-hashed passwords, JWT sessions in an httpOnly cookie, MySQL
+persistence, per-user data isolation (verified: one account cannot read or modify
 another's children), server-enforced age gate, and genuine AI analysis with IMCI
 danger-sign screening.
 
+Also real, and new with the doctor feature: doctor registration and admin verification;
+weekly availability and the slots generated from it; booking, cancellation and the unique
+index that makes double-booking impossible; the consent-gated child record; and clinical
+notes. Suspending a doctor takes effect on their **next request**, not when their cookie
+expires, because role and status are re-read from the database every time.
+
 **Simulated:**
-- **Doctor chat and voice call** — scripted replies, no clinician involved.
+- **Doctor chat** — scripted replies, no clinician involved. It lives behind
+  `services/chatService.ts`, whose signatures are already the ones a real API would have,
+  so making it real is a change to that one file plus a `messages` table.
+- **Voice call** — no WebRTC, no signalling; only the doctor being called is real.
 - **Premium subscription ($2.99/mo)** — a boolean on the user, no payment processor.
   Emergencies deliberately bypass it.
-- Facility phone numbers and doctor profiles are demo data.
+- **Doctor ratings** — seeded numbers; there is no reviews table.
+- Facility phone numbers and the seeded doctor profiles are demo data.
+
+### What a doctor can and cannot see
+
+A doctor's authority to read a child's record comes from exactly one place: an appointment
+they hold with that child. The record is scoped to that **one child**, not the family; the
+parent's consent is a per-appointment checkbox they can decline; and the read is a separate
+handler from the parent-scoped queries so widening one can never widen the other. There is
+no admin route anywhere that returns a child's name, a symptom string or a clinical note —
+the admin console is a verification queue plus counters.
 
 **Not yet done:** the danger-sign detection has had no clinical validation, and the Tetum
 medical vocabulary has not been reviewed by a medical translator. Both are the first

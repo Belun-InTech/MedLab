@@ -14,5 +14,7 @@
     "declaration": false,
     "sourceMap": true
   },
-  "include": ["src/**/*.ts", "../shared/**/*.ts"]
+  "include": ["src/**/*.ts", "../shared/**/*.ts"],
+  // Tests run through tsx (`npm run test`) and have no business in the production build.
+  "exclude": ["src/**/*.test.ts"]
 }

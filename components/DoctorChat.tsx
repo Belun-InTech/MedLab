@@ -1,50 +1,63 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, ArrowLeft, Phone, FlaskConical } from 'lucide-react';
 import { Specialist } from '../shared/types';
-import { MOCK_SPECIALISTS } from '../constants/medicalData';
+import DoctorAvatar from './DoctorAvatar';
+import {
+  ChatMessage,
+  fetchMessages,
+  openConversation,
+  sendMessage,
+  simulateDoctorReply,
+} from '../services/chatService';
 
 interface DoctorChatProps {
   t: any;
-  specialist?: Specialist | null;
+  /** Required: there is no mock doctor to fall back to any more. */
+  specialist: Specialist;
+  /** A conversation is per (doctor, child) — a parent's other children are a separate thread. */
+  childId: string;
   onStartCall: () => void;
   onBack: () => void;
 }
 
-interface ChatMessage {
-  id: number;
-  from: 'user' | 'doctor';
-  text: string;
-}
-
-// Simulated chat: scripted doctor replies delivered one per user message, with a typing delay.
-const DoctorChat: React.FC<DoctorChatProps> = ({ t, specialist, onStartCall, onBack }) => {
+/**
+ * Chat is SIMULATED, but no longer simulated inside this component: everything goes
+ * through services/chatService.ts, whose signatures are already the ones a real API would
+ * expose. Making chat real is a change to that one file, not to this screen.
+ */
+const DoctorChat: React.FC<DoctorChatProps> = ({ t, specialist: doctor, childId, onStartCall, onBack }) => {
   const td = t.doctorTalk;
-  const doctor = specialist || MOCK_SPECIALISTS[0];
   const replies: string[] = td.cannedReplies;
 
+  const [conversationId, setConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const replyIndexRef = useRef(0);
-  const idRef = useRef(0);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  const pushDoctorReply = () => {
-    const text = replies[Math.min(replyIndexRef.current, replies.length - 1)];
-    replyIndexRef.current += 1;
+  const pushDoctorReply = async (id: string) => {
     setIsTyping(true);
-    setTimeout(() => {
-      setIsTyping(false);
-      setMessages(prev => [...prev, { id: ++idRef.current, from: 'doctor', text }]);
-    }, 1500 + Math.random() * 1000);
+    const message = await simulateDoctorReply(id, doctor, replies, replyIndexRef.current++);
+    setIsTyping(false);
+    setMessages(prev => [...prev, message]);
   };
 
   const startedRef = useRef(false);
   useEffect(() => {
-    // doctor opens the conversation; ref guard keeps StrictMode's double-mount from queuing two replies
+    // The ref guard keeps StrictMode's double-mount from queuing two opening replies.
     if (startedRef.current) return;
     startedRef.current = true;
-    pushDoctorReply();
+
+    (async () => {
+      const conversation = await openConversation(doctor.id, childId);
+      setConversationId(conversation.id);
+      const existing = await fetchMessages(conversation.id);
+      setMessages(existing);
+      // The doctor opens the conversation, but only the first time it is created.
+      if (existing.length === 0) await pushDoctorReply(conversation.id);
+      else replyIndexRef.current = existing.filter(m => m.from === 'doctor').length;
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -52,12 +65,14 @@ const DoctorChat: React.FC<DoctorChatProps> = ({ t, specialist, onStartCall, onB
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
-  const handleSend = (e: React.FormEvent) => {
+  const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isTyping) return;
-    setMessages(prev => [...prev, { id: ++idRef.current, from: 'user', text: input.trim() }]);
+    if (!input.trim() || isTyping || !conversationId) return;
+    const body = input.trim();
     setInput('');
-    pushDoctorReply();
+    const sent = await sendMessage(conversationId, body);
+    setMessages(prev => [...prev, sent]);
+    await pushDoctorReply(conversationId);
   };
 
   return (
@@ -71,7 +86,7 @@ const DoctorChat: React.FC<DoctorChatProps> = ({ t, specialist, onStartCall, onB
         <div className="p-4 bg-slate-900 text-white flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <div className="relative flex-shrink-0">
-              <img src={doctor.image} alt={doctor.name} className="w-11 h-11 rounded-full border-2 border-slate-700 object-cover" />
+              <DoctorAvatar name={doctor.name} photoUrl={doctor.photoUrl} size="sm" />
               <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full" />
             </div>
             <div className="min-w-0">
@@ -96,13 +111,13 @@ const DoctorChat: React.FC<DoctorChatProps> = ({ t, specialist, onStartCall, onB
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50 dark:bg-slate-900/50">
           {messages.map(msg => (
-            <div key={msg.id} className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div key={msg.id} className={`flex ${msg.from === 'parent' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed shadow-sm
-                ${msg.from === 'user'
+                ${msg.from === 'parent'
                   ? 'bg-blue-600 text-white rounded-br-md'
                   : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-100 dark:border-slate-700 rounded-bl-md'}`}
               >
-                {msg.text}
+                {msg.body}
               </div>
             </div>
           ))}

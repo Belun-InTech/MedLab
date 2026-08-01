@@ -7,6 +7,9 @@ import { pingDatabase } from './db/index.js';
 import { authRouter } from './routes/auth.js';
 import { childrenRouter } from './routes/children.js';
 import { consultationsRouter } from './routes/consultations.js';
+import { doctorsRouter } from './routes/doctors.js';
+import { appointmentsRouter } from './routes/appointments.js';
+import { adminRouter } from './routes/admin.js';
 import { activeProvider, negotiatedStructuredMode } from './ai/providers.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -39,7 +42,11 @@ app.get('/api/health', async (_req, res) => {
 app.use('/api/auth', authRouter);
 app.use('/api/children', childrenRouter);
 app.use('/api/consultations', consultationsRouter);
+app.use('/api/doctors', doctorsRouter);
+app.use('/api/appointments', appointmentsRouter);
+app.use('/api/admin', adminRouter);
 
+// Must stay last: this swallows every unmatched /api path.
 app.use('/api', (_req, res) => {
   res.status(404).json({ error: 'not_found' });
 });

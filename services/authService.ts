@@ -2,7 +2,7 @@
 // JWT in an httpOnly cookie. Nothing sensitive is kept in localStorage any more, and
 // the browser cannot read the session token.
 
-import { Account } from '../shared/types';
+import { Account, DoctorAccount, DoctorProfile, Role } from '../shared/types';
 import { api, ApiError } from './api';
 
 export interface SessionUser {
@@ -10,7 +10,10 @@ export interface SessionUser {
   name: string;
   email: string;
   dob: string;
+  role: Role;
   subscribed: boolean;
+  /** Present only when role === 'doctor'. Carries the verification status the shell gates on. */
+  doctor?: DoctorProfile;
 }
 
 export const MIN_PARENT_AGE = 18;
@@ -51,6 +54,29 @@ export const signup = async (account: Account): Promise<SignupResult> => {
     if (err instanceof ApiError) {
       if (err.code === 'under_age') return { status: 'error', reason: 'under_age' };
       if (err.code === 'email_taken') return { status: 'error', reason: 'email_taken' };
+      return { status: 'error', reason: 'invalid_input' };
+    }
+    return { status: 'error', reason: 'network' };
+  }
+};
+
+export type DoctorSignupResult =
+  | { status: 'ok'; user: SessionUser }
+  | {
+      status: 'error';
+      reason: 'under_age' | 'email_taken' | 'license_taken' | 'invalid_input' | 'network';
+    };
+
+/** Registers a health professional. The account lands in 'pending' until an admin approves. */
+export const signupDoctor = async (account: DoctorAccount): Promise<DoctorSignupResult> => {
+  try {
+    const { user } = await api.post<{ user: SessionUser }>('/auth/signup/doctor', account);
+    return { status: 'ok', user };
+  } catch (err) {
+    if (err instanceof ApiError) {
+      if (err.code === 'under_age') return { status: 'error', reason: 'under_age' };
+      if (err.code === 'email_taken') return { status: 'error', reason: 'email_taken' };
+      if (err.code === 'license_taken') return { status: 'error', reason: 'license_taken' };
       return { status: 'error', reason: 'invalid_input' };
     }
     return { status: 'error', reason: 'network' };
