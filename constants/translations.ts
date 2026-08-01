@@ -2,8 +2,8 @@ export const TRANSLATIONS = {
   en: {
     hero: {
       title: "Care for your child.",
-      subtitle: "Care for your pregnancy.",
-      desc: "Médiku Labarik uses Artificial Intelligence to help mothers and caregivers in Timor-Leste understand symptoms in children and during pregnancy — and guides you to the right care."
+      subtitle: "From the first month onward.",
+      desc: "Médiku Labarik uses Artificial Intelligence to help parents and caregivers in Timor-Leste understand their child's symptoms — and guides them to the right care."
     },
     header: {
       aboutMenuTitle: "About MédLab",
@@ -13,18 +13,42 @@ export const TRANSLATIONS = {
       faq: "FAQ",
       faqSubtitle: "Common questions",
       editProfile: "Family Profile",
-      editProfileSubtitle: "Edit mother & children",
+      editProfileSubtitle: "Edit your children",
+      logout: "Log out",
+      logoutSubtitle: "Sign out of this device",
       language: "Language"
     },
+    auth: {
+      loginTab: "Log in",
+      signupTab: "Sign up",
+      welcomeTitle: "Welcome to Médiku Labarik",
+      loginSubtitle: "Log in to continue.",
+      signupSubtitle: "Only a parent or guardian can create an account.",
+      name: "Your name",
+      dob: "Your date of birth",
+      dobHelp: "We use this to confirm you are a parent or guardian.",
+      email: "Email",
+      password: "Password",
+      loginBtn: "Log in",
+      signupBtn: "Create account",
+      noAccountYet: "No account yet? Sign up",
+      haveAccount: "Already have an account? Log in",
+      invalidCredentials: "Email or password is not correct.",
+      noAccount: "No account found on this device. Sign up first.",
+      fieldsRequired: "Please fill in all fields.",
+      passwordTooShort: "Password must be at least 4 characters.",
+      underAge: "You must be at least 18 to register as a parent or guardian.",
+      emailTaken: "That email is already registered. Log in instead.",
+      networkError: "Could not reach the server. Check your connection and try again.",
+      demoNote: "Demo account — for evaluation only."
+    },
     home: {
-      welcomeSub: "Maternal & Child Health Companion",
+      welcomeSub: "Child Health Companion",
       hello: "Hello",
-      heroDesc: "Your family's health assistant: check symptoms, follow your pregnancy, keep vaccines on time, and reach a doctor when you need one.",
+      heroDesc: "Your children's health assistant: check symptoms, keep vaccines on time, and reach a doctor when you need one.",
       cards: {
         checker: "Check Symptoms",
-        checkerDesc: "AI analysis for your child or your pregnancy",
-        tracker: "Pregnancy Tracker",
-        trackerDesc: "Follow your pregnancy week by week",
+        checkerDesc: "AI analysis for your child, from the first month",
         vaccines: "Vaccinations",
         vaccinesDesc: "Keep your children's vaccines on schedule",
         doctor: "Talk to a Doctor",
@@ -34,17 +58,9 @@ export const TRANSLATIONS = {
       }
     },
     onboarding: {
-      title: "Welcome to Médiku Labarik",
-      subtitle: "Tell us about your family so we can personalize your care. Everything stays on this device.",
+      title: "Register your children",
+      subtitle: "Add each child so we can tailor advice to their exact age. Their records stay private to your account.",
       editTitle: "Family Profile",
-      momSection: "About the mother",
-      momName: "Mother's name",
-      momDob: "Date of birth (optional)",
-      pregnantQ: "Are you currently pregnant?",
-      yes: "Yes",
-      no: "No",
-      lmp: "First day of your last menstrual period",
-      lmpHelp: "We use this to calculate your pregnancy week and due date.",
       childrenSection: "Your children",
       addChild: "Add a child",
       childName: "Child's name",
@@ -53,19 +69,16 @@ export const TRANSLATIONS = {
       boy: "Boy",
       girl: "Girl",
       remove: "Remove",
-      noChildrenHint: "You can add children now or later.",
+      noChildrenHint: "Add at least one child to continue.",
       save: "Save & Continue",
-      nameRequired: "Please enter the mother's name."
+      childRequired: "Please add at least one child with a name and date of birth."
     },
     selector: {
-      title: "Who needs help today?",
-      subtitle: "Choose who you want to check symptoms for.",
-      mother: "Mother",
-      pregnantBadge: "Pregnant",
-      week: "Week",
+      title: "Which child needs help today?",
+      subtitle: "Choose the child you want to check symptoms for.",
       months: "months",
       years: "years",
-      notPregnantNote: "Pregnancy check is available when the profile says you are pregnant."
+      noChildrenNote: "Add a child to your family profile to start a check."
     },
     input: {
       title: "Describe the Symptoms",
@@ -74,7 +87,6 @@ export const TRANSLATIONS = {
       age: "Age",
       weight: "Weight (kg, optional)",
       weightPlaceholder: "e.g., 12",
-      gestationalAge: "Pregnancy week",
       onset: "When did it start?",
       onsetPlaceholder: "e.g., 2 days ago (Optional)",
       symptomsLabel: "Describe Symptoms",
@@ -89,7 +101,6 @@ export const TRANSLATIONS = {
       back: "← Back"
     },
     childSymptoms: ["Fever", "Cough", "Diarrhea", "Vomiting", "Not eating", "Rash", "Fast breathing", "Crying a lot"],
-    pregnancySymptoms: ["Nausea", "Headache", "Swelling", "Bleeding", "Abdominal pain", "Dizziness", "Less baby movement", "Back pain"],
     results: {
       title: "Analysis Results",
       newRecord: "New Check",
@@ -118,50 +129,6 @@ export const TRANSLATIONS = {
     specialistNames: {
       "General Practitioner": "General Practitioner",
       "Pediatrician": "Pediatrician",
-      "Obstetrician-Gynecologist": "Obstetrician-Gynecologist",
-      "Midwife": "Midwife"
-    },
-    tracker: {
-      title: "Pregnancy Tracker",
-      subtitle: "Following your journey week by week",
-      week: "Week",
-      of40: "of 40",
-      trimester: "Trimester",
-      trimesterNames: ["First trimester", "Second trimester", "Third trimester"],
-      dueDate: "Estimated due date",
-      daysToGo: "days to go",
-      overdueNote: "Past the estimated due date — please see your midwife.",
-      tipsTitle: "Tips for this stage",
-      tips: [
-        [
-          "Start taking folic acid and iron tablets from the health center.",
-          "Eat small, frequent meals if you feel nausea.",
-          "Avoid alcohol, tobacco, and unprescribed medicines.",
-          "Go to your first antenatal (ANC) visit as early as possible."
-        ],
-        [
-          "You should start to feel the baby move — tell your midwife if you don't.",
-          "Sleep under a mosquito net to prevent malaria and dengue.",
-          "Keep attending your ANC visits and take your iron tablets.",
-          "Eat protein-rich foods: eggs, fish, beans, and green vegetables."
-        ],
-        [
-          "Count baby movements daily — fewer movements is a danger sign.",
-          "Plan your birth: decide the facility and transport in advance.",
-          "Watch for danger signs: bleeding, severe headache, swelling of face or hands.",
-          "Prepare clean clothes and documents for the birth."
-        ]
-      ],
-      ancTitle: "Antenatal Care (ANC) Visits",
-      ancSubtitle: "WHO recommends 8 contacts during pregnancy",
-      contact: "Contact",
-      weekLabel: "Week",
-      done: "Done",
-      next: "Next visit",
-      upcoming: "Upcoming",
-      notPregnant: "No active pregnancy",
-      notPregnantDesc: "Update your family profile if you are pregnant to activate the tracker.",
-      updateProfile: "Update Profile"
     },
     vaccines: {
       title: "Vaccination Schedule",
@@ -220,9 +187,9 @@ export const TRANSLATIONS = {
     },
     paywall: {
       title: "MédLab Premium",
-      subtitle: "Direct access to doctors and midwives, whenever you need them.",
+      subtitle: "Direct access to doctors, whenever your child needs them.",
       freeName: "Free",
-      freeFeatures: ["AI symptom checks", "Pregnancy tracker", "Vaccination schedule", "Facility directory"],
+      freeFeatures: ["AI symptom checks", "Vaccination schedule", "Facility directory", "Emergency alerts"],
       premiumName: "Premium",
       premiumFeatures: ["Everything in Free", "Unlimited chat with doctors", "Voice calls with specialists", "Priority emergency guidance"],
       perMonth: "/ month",
@@ -236,14 +203,14 @@ export const TRANSLATIONS = {
     about: {
       back: "Back",
       title: "About Médiku Labarik ",
-      bio1: "Médiku Labarik (MédLab) is an intelligent maternal and child health assistant built for Timor-Leste. Powered by Artificial Intelligence, it helps mothers and caregivers understand symptoms in children and during pregnancy, and connects them with the right care.",
-      bio2: "Our mission is to reduce preventable child and maternal illness by putting trusted, easy-to-understand health guidance — in Tetum, English, and Indonesian — into every family's hands.",
+      bio1: "Médiku Labarik (MédLab) is an intelligent child health assistant built for Timor-Leste. Powered by Artificial Intelligence, it helps parents and caregivers understand their child's symptoms — from the first month of life — and connects them with the right care.",
+      bio2: "Our mission is to reduce preventable child illness by putting trusted, easy-to-understand health guidance — in Tetum, English, and Indonesian — into every parent's hands.",
       whyTitle: "Why use MédLab",
       features: [
-        { title: "Built for Mothers & Children", desc: "Age-aware analysis for children and gestation-aware analysis for pregnancy — not generic adult advice." },
+        { title: "Built for Children", desc: "Analysis tuned to your child's exact age in months — not generic adult advice." },
         { title: "Instant, 24/7", desc: "No waiting rooms. Get preliminary guidance in seconds, day or night, in your language." },
         { title: "From Advice to Action", desc: "Danger-sign alerts, care provider matching, vaccination reminders, and a direct line to doctors." },
-        { title: "Privacy First", desc: "Your family profile stays on your device. We prioritize your data security." }
+        { title: "Privacy First", desc: "Your family's records are private to your account. We never sell or share your data." }
       ]
     },
     faq: {
@@ -251,11 +218,11 @@ export const TRANSLATIONS = {
       items: [
         {
           q: "Is Médiku Labarik a replacement for a real doctor?",
-          a: "No. MédLab is an informational tool to help you understand possible causes of symptoms in your child or during pregnancy. It cannot provide an official medical diagnosis. Always consult a qualified health professional for medical decisions."
+          a: "No. MédLab is an informational tool to help you understand possible causes of your child's symptoms. It cannot provide an official medical diagnosis. Always consult a qualified health professional for medical decisions."
         },
         {
           q: "How does the AI analyze the symptoms?",
-          a: "The app uses an AI medical model. It compares the symptoms you describe (text or photo) with medical knowledge — including child danger signs and pregnancy danger signs — to suggest probable conditions and next steps."
+          a: "The app uses an AI medical model. It compares the symptoms you describe (text or photo) with medical knowledge — including the IMCI danger signs for children — to suggest probable conditions and next steps."
         },
         {
           q: "What should I do if the app shows a red Emergency alert?",
@@ -263,7 +230,7 @@ export const TRANSLATIONS = {
         },
         {
           q: "Is my family's data safe?",
-          a: "Yes. Your family profile and health checks are stored only on your own device. We do not share your personal information."
+          a: "Your children's records and health checks are stored in your private MédLab account, protected by your password. We do not sell or share your personal information."
         },
         {
           q: "Why are some care provider names in English?",
@@ -272,7 +239,7 @@ export const TRANSLATIONS = {
       ]
     },
     footer: {
-      safety: "Médiku Labarik provides informational suggestions only. For medical decisions, always consult your doctor, midwife, or nearest health facility."
+      safety: "Médiku Labarik provides informational suggestions only. For medical decisions, always consult your doctor or nearest health facility."
     },
     error: "There was a problem during analysis. Please make sure the AI service is running and try again."
   },
@@ -280,8 +247,8 @@ export const TRANSLATIONS = {
   tet: {
     hero: {
       title: "Kuidadu ba ita-nia oan.",
-      subtitle: "Kuidadu ba ita-nia isin-rua.",
-      desc: "Médiku Labarik uza Inteligénsia Artifisial atu ajuda inan no kuidadór sira iha Timor-Leste komprende sintoma iha labarik no durante isin-rua — no orienta ita ba kuidadu ne'ebé loos."
+      subtitle: "Husi fulan dahuluk ba oin.",
+      desc: "Médiku Labarik uza Inteligénsia Artifisial atu ajuda inan-aman no kuidadór sira iha Timor-Leste komprende sintoma iha sira-nia oan — no orienta sira ba kuidadu ne'ebé loos."
     },
     header: {
       aboutMenuTitle: "Kona-ba MédLab",
@@ -291,18 +258,42 @@ export const TRANSLATIONS = {
       faq: "Perguntas (FAQ)",
       faqSubtitle: "Perguntas baibain",
       editProfile: "Perfil Família",
-      editProfileSubtitle: "Edita inan no oan sira",
+      editProfileSubtitle: "Edita ita-nia oan sira",
+      logout: "Sai",
+      logoutSubtitle: "Sai husi dispozitivu ida ne'e",
       language: "Lian"
     },
+    auth: {
+      loginTab: "Tama",
+      signupTab: "Rejista",
+      welcomeTitle: "Benvinda ba Médiku Labarik",
+      loginSubtitle: "Tama atu kontinua.",
+      signupSubtitle: "Inan-aman ka responsável de'it mak bele kria konta.",
+      name: "Ita-nia naran",
+      dob: "Ita-nia data moris",
+      dobHelp: "Ami uza ida ne'e atu konfirma katak ita mak inan-aman ka responsável.",
+      email: "Email",
+      password: "Password",
+      loginBtn: "Tama",
+      signupBtn: "Kria konta",
+      noAccountYet: "Seidauk iha konta? Rejista",
+      haveAccount: "Iha ona konta? Tama",
+      invalidCredentials: "Email ka password la loos.",
+      noAccount: "La hetan konta iha dispozitivu ida ne'e. Rejista uluk.",
+      fieldsRequired: "Favor prenxe kampu hotu.",
+      passwordTooShort: "Password tenke iha karakter 4 ba leten.",
+      underAge: "Ita tenke iha tinan 18 ba leten atu rejista nu'udar inan-aman ka responsável.",
+      emailTaken: "Email ne'e rejista ona. Favor tama.",
+      networkError: "La bele hetan servidor. Verifika ligasaun no koko fali.",
+      demoNote: "Konta demo — ba avaliasaun de'it."
+    },
     home: {
-      welcomeSub: "Akompañante Saúde Inan no Oan",
+      welcomeSub: "Akompañante Saúde Labarik",
       hello: "Olá",
-      heroDesc: "Asistente saúde ba ita-nia família: analiza sintoma, akompaña isin-rua, kumpri orariu vasina, no kontaktu doutór bainhira presiza.",
+      heroDesc: "Asistente saúde ba ita-nia oan sira: analiza sintoma, kumpri orariu vasina, no kontaktu doutór bainhira presiza.",
       cards: {
         checker: "Analiza Sintoma",
-        checkerDesc: "Análize AI ba ita-nia oan ka isin-rua",
-        tracker: "Akompaña Isin-rua",
-        trackerDesc: "Akompaña ita-nia isin-rua semana ba semana",
+        checkerDesc: "Análize AI ba ita-nia oan, husi fulan dahuluk",
         vaccines: "Vasina",
         vaccinesDesc: "Kumpri orariu vasina ba ita-nia oan sira",
         doctor: "Ko'alia ho Doutór",
@@ -312,17 +303,9 @@ export const TRANSLATIONS = {
       }
     },
     onboarding: {
-      title: "Benvinda ba Médiku Labarik",
-      subtitle: "Konta ami kona-ba ita-nia família atu ami bele personaliza kuidadu. Dadus hotu rai de'it iha dispozitivu ida ne'e.",
+      title: "Rejista ita-nia oan sira",
+      subtitle: "Aumenta oan ida-idak atu ami bele fó konsellu tuir sira-nia idade loloos. Sira-nia rejistu privadu ba ita-nia konta.",
       editTitle: "Perfil Família",
-      momSection: "Kona-ba inan",
-      momName: "Naran inan nian",
-      momDob: "Data moris (opsionál)",
-      pregnantQ: "Ita isin-rua hela ka lae?",
-      yes: "Sin",
-      no: "Lae",
-      lmp: "Loron primeiru husi menstruasaun ikus",
-      lmpHelp: "Ami uza ida ne'e atu kalkula semana isin-rua no data partu.",
       childrenSection: "Ita-nia oan sira",
       addChild: "Aumenta oan ida",
       childName: "Naran oan nian",
@@ -331,19 +314,16 @@ export const TRANSLATIONS = {
       boy: "Mane",
       girl: "Feto",
       remove: "Hasai",
-      noChildrenHint: "Ita bele aumenta oan sira agora ka ikus mai.",
+      noChildrenHint: "Aumenta oan ida pelumenus atu kontinua.",
       save: "Rai & Kontinua",
-      nameRequired: "Favor hakerek naran inan nian."
+      childRequired: "Favor aumenta oan ida pelumenus ho naran no data moris."
     },
     selector: {
-      title: "Sé mak presiza ajuda ohin?",
-      subtitle: "Hili sé mak ita hakarak analiza sintoma ba.",
-      mother: "Inan",
-      pregnantBadge: "Isin-rua",
-      week: "Semana",
+      title: "Oan ida-ne'ebé presiza ajuda ohin?",
+      subtitle: "Hili oan ne'ebé ita hakarak analiza sintoma ba.",
       months: "fulan",
       years: "tinan",
-      notPregnantNote: "Análize isin-rua disponivel bainhira perfil hatete katak ita isin-rua."
+      noChildrenNote: "Aumenta oan ida iha perfil família atu komesa análize."
     },
     input: {
       title: "Deskreve Sintoma",
@@ -352,7 +332,6 @@ export const TRANSLATIONS = {
       age: "Idade",
       weight: "Todan (kg, opsionál)",
       weightPlaceholder: "ez., 12",
-      gestationalAge: "Semana isin-rua",
       onset: "Komesa horibainhira?",
       onsetPlaceholder: "ez. loron 2 liuba (Opsionál)",
       symptomsLabel: "Deskreve Sintoma",
@@ -367,7 +346,6 @@ export const TRANSLATIONS = {
       back: "← Fila"
     },
     childSymptoms: ["Isin manas", "Mear", "Kabun-been", "Muta", "Lakohi han", "Isin sae", "Dada iis lalais", "Tanis barak"],
-    pregnancySymptoms: ["Muta-muta", "Ulun moras", "Isin bubu", "Raan sai", "Kabun moras", "Oin halai", "Bebé book uitoan", "Kotuk moras"],
     results: {
       title: "Rezultadu Análize",
       newRecord: "Análize Foun",
@@ -396,50 +374,6 @@ export const TRANSLATIONS = {
     specialistNames: {
       "General Practitioner": "Médiku Jerál",
       "Pediatrician": "Pediatra",
-      "Obstetrician-Gynecologist": "Obstetra-Jinekolojista",
-      "Midwife": "Parteira"
-    },
-    tracker: {
-      title: "Akompaña Isin-rua",
-      subtitle: "Akompaña ita-nia viajen semana ba semana",
-      week: "Semana",
-      of40: "husi 40",
-      trimester: "Trimestre",
-      trimesterNames: ["Trimestre primeiru", "Trimestre segundu", "Trimestre terseiru"],
-      dueDate: "Data partu estimada",
-      daysToGo: "loron tan",
-      overdueNote: "Liu tiha ona data partu estimada — favor hasoru ita-nia parteira.",
-      tipsTitle: "Konsellu ba faze ida ne'e",
-      tips: [
-        [
-          "Komesa hemu ai-moruk ásidu fóliku no ferru husi sentru saúde.",
-          "Han ki'ik maibé dala barak se ita sente muta-muta.",
-          "Evita tua, tabaku, no ai-moruk laiha reseita.",
-          "Bá vizita ANC (konsulta isin-rua) primeiru sedu bele."
-        ],
-        [
-          "Ita tenke komesa sente bebé book — hatete ba parteira se lae.",
-          "Toba iha muskiteiru laran atu prevene malária no dengue.",
-          "Kontinua bá vizita ANC no hemu ai-moruk ferru.",
-          "Han hahán ho proteína: tolun, ikan, fore, no modo matak."
-        ],
-        [
-          "Sura bebé nia movimentu loron-loron — movimentu uitoan mak sinál perigu.",
-          "Planeia ita-nia partu: deside fatin no transporte molok tempu to'o.",
-          "Atensaun ba sinál perigu: raan sai, ulun moras makaas, isin bubu iha oin ka liman.",
-          "Prepara roupa moos no dokumentu ba partu."
-        ]
-      ],
-      ancTitle: "Vizita Kuidadu Antenatál (ANC)",
-      ancSubtitle: "OMS rekomenda kontaktu 8 durante isin-rua",
-      contact: "Kontaktu",
-      weekLabel: "Semana",
-      done: "Halo tiha ona",
-      next: "Vizita tuirmai",
-      upcoming: "Sei mai",
-      notPregnant: "Laiha isin-rua ativu",
-      notPregnantDesc: "Atualiza ita-nia perfil família se ita isin-rua atu ativa akompañamentu.",
-      updateProfile: "Atualiza Perfil"
     },
     vaccines: {
       title: "Orariu Vasina",
@@ -498,9 +432,9 @@ export const TRANSLATIONS = {
     },
     paywall: {
       title: "MédLab Premium",
-      subtitle: "Asesu diretu ba doutór no parteira sira, bainhira de'it ita presiza.",
+      subtitle: "Asesu diretu ba doutór sira, bainhira de'it ita-nia oan presiza.",
       freeName: "Grátis",
-      freeFeatures: ["Análize sintoma AI", "Akompaña isin-rua", "Orariu vasina", "Diretóriu fasilidade"],
+      freeFeatures: ["Análize sintoma AI", "Orariu vasina", "Diretóriu fasilidade", "Alerta emerjénsia"],
       premiumName: "Premium",
       premiumFeatures: ["Buat hotu iha Grátis", "Chat ilimitadu ho doutór", "Ligasaun lian ho espesialista", "Orientasaun emerjénsia prioridade"],
       perMonth: "/ fulan",
@@ -514,14 +448,14 @@ export const TRANSLATIONS = {
     about: {
       back: "Fila",
       title: "Kona-ba Médiku Labarik ",
-      bio1: "Médiku Labarik (MédLab) mak asistente saúde inteligente ba inan no oan, harii ba Timor-Leste. Ho Inteligénsia Artifisial, nia ajuda inan no kuidadór sira komprende sintoma iha labarik no durante isin-rua, no liga sira ho kuidadu ne'ebé loos.",
-      bio2: "Ami-nia misaun mak atu hamenus moras labarik no inan ne'ebé bele prevene, hodi tau orientasaun saúde ne'ebé fiar no fásil komprende — iha Tetun, Inglés, no Indonézia — iha família hotu-hotu nia liman.",
+      bio1: "Médiku Labarik (MédLab) mak asistente saúde inteligente ba labarik, harii ba Timor-Leste. Ho Inteligénsia Artifisial, nia ajuda inan-aman no kuidadór sira komprende sintoma iha sira-nia oan — husi fulan dahuluk moris — no liga sira ho kuidadu ne'ebé loos.",
+      bio2: "Ami-nia misaun mak atu hamenus moras labarik ne'ebé bele prevene, hodi tau orientasaun saúde ne'ebé fiar no fásil komprende — iha Tetun, Inglés, no Indonézia — iha inan-aman hotu-hotu nia liman.",
       whyTitle: "Tansá uza MédLab",
       features: [
-        { title: "Harii ba Inan no Oan", desc: "Análize tuir idade ba labarik no tuir semana isin-rua ba inan — la'ós konsellu jerál ba ema boot." },
+        { title: "Harii ba Labarik", desc: "Análize tuir ita-nia oan nia idade loloos iha fulan — la'ós konsellu jerál ba ema boot." },
         { title: "Imediatu, 24/7", desc: "La presiza hein. Hetan orientasaun preliminár iha segundu laran, loron ka kalan, iha ita-nia lian." },
         { title: "Husi Konsellu ba Asaun", desc: "Alerta sinál perigu, rekomendasaun fornesedor kuidadu, lembransa vasina, no liña diretu ba doutór." },
-        { title: "Privasidade Uluk", desc: "Ita-nia perfil família rai de'it iha ita-nia dispozitivu. Ami prioriza seguransa dadus." }
+        { title: "Privasidade Uluk", desc: "Ita-nia rejistu família privadu ba ita-nia konta. Ami la fa'an ka fahe ita-nia dadus." }
       ]
     },
     faq: {
@@ -529,11 +463,11 @@ export const TRANSLATIONS = {
       items: [
         {
           q: "Médiku Labarik troka fali doutór sira ka lae?",
-          a: "Lae. MédLab mak ferramenta informasaun nian atu ajuda komprende kauza posivel husi sintoma iha ita-nia oan ka durante isin-rua. Nia labele fó diagnoza ofisiál. Konsulta nafatin ho profisionál saúde kualifikadu ba desizaun médika."
+          a: "Lae. MédLab mak ferramenta informasaun nian atu ajuda komprende kauza posivel husi sintoma iha ita-nia oan. Nia labele fó diagnoza ofisiál. Konsulta nafatin ho profisionál saúde kualifikadu ba desizaun médika."
         },
         {
           q: "Oinsá AI analiza sintoma sira?",
-          a: "Aplikasaun ne'e uza modelu AI médiku. Nia kompara sintoma ne'ebé ita deskreve (testu ka foto) ho koñesimentu médiku — inklui sinál perigu labarik nian no isin-rua nian — atu sujere kondisaun provavel no pasu tuirmai."
+          a: "Aplikasaun ne'e uza modelu AI médiku. Nia kompara sintoma ne'ebé ita deskreve (testu ka foto) ho koñesimentu médiku — inklui sinál perigu IMCI ba labarik — atu sujere kondisaun provavel no pasu tuirmai."
         },
         {
           q: "Saida mak ha'u tenke halo se aplikasaun hatudu avizu Emerjénsia mean?",
@@ -541,7 +475,7 @@ export const TRANSLATIONS = {
         },
         {
           q: "Ha'u-nia família nia dadus seguru ka lae?",
-          a: "Sin. Ita-nia perfil família no análize saúde rai de'it iha ita-nia dispozitivu rasik. Ami la fahe ita-nia informasaun pesoál."
+          a: "Ita-nia oan sira-nia rejistu no análize saúde rai iha ita-nia konta MédLab privadu, proteje ho ita-nia password. Ami la fa'an ka fahe ita-nia informasaun pesoál."
         },
         {
           q: "Tansá naran fornesedor kuidadu balu iha lian Inglés?",
@@ -550,7 +484,7 @@ export const TRANSLATIONS = {
       ]
     },
     footer: {
-      safety: "Médiku Labarik fornese sujestaun informativu de'it. Ba desizaun médika, konsulta nafatin ita-nia doutór, parteira, ka fasilidade saúde besik liu."
+      safety: "Médiku Labarik fornese sujestaun informativu de'it. Ba desizaun médika, konsulta nafatin ita-nia doutór ka fasilidade saúde besik liu."
     },
     error: "Iha problema durante análize. Favor verifika katak servisu AI la'o hela no koko fali."
   },
@@ -558,8 +492,8 @@ export const TRANSLATIONS = {
   id: {
     hero: {
       title: "Rawat anak Anda.",
-      subtitle: "Rawat kehamilan Anda.",
-      desc: "Médiku Labarik menggunakan Kecerdasan Buatan untuk membantu ibu dan pengasuh di Timor-Leste memahami gejala pada anak dan selama kehamilan — serta memandu Anda ke perawatan yang tepat."
+      subtitle: "Sejak bulan pertama.",
+      desc: "Médiku Labarik menggunakan Kecerdasan Buatan untuk membantu orang tua dan pengasuh di Timor-Leste memahami gejala pada anak mereka — serta memandu ke perawatan yang tepat."
     },
     header: {
       aboutMenuTitle: "Tentang MédLab",
@@ -569,18 +503,42 @@ export const TRANSLATIONS = {
       faq: "FAQ",
       faqSubtitle: "Pertanyaan umum",
       editProfile: "Profil Keluarga",
-      editProfileSubtitle: "Edit ibu & anak-anak",
+      editProfileSubtitle: "Edit anak-anak Anda",
+      logout: "Keluar",
+      logoutSubtitle: "Keluar dari perangkat ini",
       language: "Bahasa"
     },
+    auth: {
+      loginTab: "Masuk",
+      signupTab: "Daftar",
+      welcomeTitle: "Selamat datang di Médiku Labarik",
+      loginSubtitle: "Masuk untuk melanjutkan.",
+      signupSubtitle: "Hanya orang tua atau wali yang dapat membuat akun.",
+      name: "Nama Anda",
+      dob: "Tanggal lahir Anda",
+      dobHelp: "Kami menggunakannya untuk memastikan Anda orang tua atau wali.",
+      email: "Email",
+      password: "Kata sandi",
+      loginBtn: "Masuk",
+      signupBtn: "Buat akun",
+      noAccountYet: "Belum punya akun? Daftar",
+      haveAccount: "Sudah punya akun? Masuk",
+      invalidCredentials: "Email atau kata sandi salah.",
+      noAccount: "Tidak ada akun di perangkat ini. Daftar dulu.",
+      fieldsRequired: "Harap isi semua kolom.",
+      passwordTooShort: "Kata sandi minimal 4 karakter.",
+      underAge: "Anda harus berusia minimal 18 tahun untuk mendaftar sebagai orang tua atau wali.",
+      emailTaken: "Email itu sudah terdaftar. Silakan masuk.",
+      networkError: "Tidak dapat menghubungi server. Periksa koneksi dan coba lagi.",
+      demoNote: "Akun demo — hanya untuk evaluasi."
+    },
     home: {
-      welcomeSub: "Pendamping Kesehatan Ibu & Anak",
+      welcomeSub: "Pendamping Kesehatan Anak",
       hello: "Halo",
-      heroDesc: "Asisten kesehatan keluarga Anda: periksa gejala, pantau kehamilan, jaga jadwal vaksin, dan hubungi dokter saat dibutuhkan.",
+      heroDesc: "Asisten kesehatan anak-anak Anda: periksa gejala, jaga jadwal vaksin, dan hubungi dokter saat dibutuhkan.",
       cards: {
         checker: "Periksa Gejala",
-        checkerDesc: "Analisis AI untuk anak atau kehamilan Anda",
-        tracker: "Pemantau Kehamilan",
-        trackerDesc: "Ikuti kehamilan Anda minggu demi minggu",
+        checkerDesc: "Analisis AI untuk anak Anda, sejak bulan pertama",
         vaccines: "Vaksinasi",
         vaccinesDesc: "Jaga jadwal vaksin anak-anak Anda",
         doctor: "Bicara dengan Dokter",
@@ -590,17 +548,9 @@ export const TRANSLATIONS = {
       }
     },
     onboarding: {
-      title: "Selamat Datang di Médiku Labarik",
-      subtitle: "Ceritakan tentang keluarga Anda agar kami dapat mempersonalisasi perawatan. Semua data tetap di perangkat ini.",
+      title: "Daftarkan anak-anak Anda",
+      subtitle: "Tambahkan setiap anak agar kami dapat menyesuaikan saran dengan usia mereka yang tepat. Catatan mereka bersifat pribadi untuk akun Anda.",
       editTitle: "Profil Keluarga",
-      momSection: "Tentang ibu",
-      momName: "Nama ibu",
-      momDob: "Tanggal lahir (opsional)",
-      pregnantQ: "Apakah Anda sedang hamil?",
-      yes: "Ya",
-      no: "Tidak",
-      lmp: "Hari pertama haid terakhir",
-      lmpHelp: "Kami menggunakannya untuk menghitung minggu kehamilan dan perkiraan tanggal persalinan.",
       childrenSection: "Anak-anak Anda",
       addChild: "Tambah anak",
       childName: "Nama anak",
@@ -609,19 +559,16 @@ export const TRANSLATIONS = {
       boy: "Laki-laki",
       girl: "Perempuan",
       remove: "Hapus",
-      noChildrenHint: "Anda dapat menambahkan anak sekarang atau nanti.",
+      noChildrenHint: "Tambahkan setidaknya satu anak untuk melanjutkan.",
       save: "Simpan & Lanjutkan",
-      nameRequired: "Silakan masukkan nama ibu."
+      childRequired: "Harap tambahkan setidaknya satu anak dengan nama dan tanggal lahir."
     },
     selector: {
-      title: "Siapa yang perlu bantuan hari ini?",
-      subtitle: "Pilih siapa yang ingin Anda periksa gejalanya.",
-      mother: "Ibu",
-      pregnantBadge: "Hamil",
-      week: "Minggu",
+      title: "Anak mana yang perlu bantuan hari ini?",
+      subtitle: "Pilih anak yang ingin Anda periksa gejalanya.",
       months: "bulan",
       years: "tahun",
-      notPregnantNote: "Pemeriksaan kehamilan tersedia jika profil menyatakan Anda sedang hamil."
+      noChildrenNote: "Tambahkan anak di profil keluarga untuk memulai pemeriksaan."
     },
     input: {
       title: "Jelaskan Gejala",
@@ -630,7 +577,6 @@ export const TRANSLATIONS = {
       age: "Umur",
       weight: "Berat badan (kg, opsional)",
       weightPlaceholder: "cth., 12",
-      gestationalAge: "Minggu kehamilan",
       onset: "Kapan mulai?",
       onsetPlaceholder: "cth. 2 hari yang lalu (Opsional)",
       symptomsLabel: "Jelaskan Gejala",
@@ -645,7 +591,6 @@ export const TRANSLATIONS = {
       back: "← Kembali"
     },
     childSymptoms: ["Demam", "Batuk", "Diare", "Muntah", "Tidak mau makan", "Ruam", "Napas cepat", "Sering menangis"],
-    pregnancySymptoms: ["Mual", "Sakit kepala", "Bengkak", "Pendarahan", "Nyeri perut", "Pusing", "Gerakan bayi berkurang", "Sakit punggung"],
     results: {
       title: "Hasil Analisis",
       newRecord: "Pemeriksaan Baru",
@@ -674,50 +619,6 @@ export const TRANSLATIONS = {
     specialistNames: {
       "General Practitioner": "Dokter Umum",
       "Pediatrician": "Dokter Anak",
-      "Obstetrician-Gynecologist": "Dokter Kandungan",
-      "Midwife": "Bidan"
-    },
-    tracker: {
-      title: "Pemantau Kehamilan",
-      subtitle: "Mengikuti perjalanan Anda minggu demi minggu",
-      week: "Minggu",
-      of40: "dari 40",
-      trimester: "Trimester",
-      trimesterNames: ["Trimester pertama", "Trimester kedua", "Trimester ketiga"],
-      dueDate: "Perkiraan tanggal persalinan",
-      daysToGo: "hari lagi",
-      overdueNote: "Sudah melewati perkiraan tanggal persalinan — segera temui bidan Anda.",
-      tipsTitle: "Tips untuk tahap ini",
-      tips: [
-        [
-          "Mulai konsumsi asam folat dan tablet zat besi dari puskesmas.",
-          "Makan sedikit tapi sering jika merasa mual.",
-          "Hindari alkohol, rokok, dan obat tanpa resep.",
-          "Lakukan kunjungan ANC (pemeriksaan kehamilan) pertama sedini mungkin."
-        ],
-        [
-          "Anda seharusnya mulai merasakan gerakan bayi — beri tahu bidan jika tidak.",
-          "Tidur dengan kelambu untuk mencegah malaria dan demam berdarah.",
-          "Terus lakukan kunjungan ANC dan minum tablet zat besi.",
-          "Makan makanan kaya protein: telur, ikan, kacang-kacangan, dan sayuran hijau."
-        ],
-        [
-          "Hitung gerakan bayi setiap hari — gerakan berkurang adalah tanda bahaya.",
-          "Rencanakan persalinan: tentukan fasilitas dan transportasi sejak awal.",
-          "Waspadai tanda bahaya: pendarahan, sakit kepala hebat, bengkak di wajah atau tangan.",
-          "Siapkan pakaian bersih dan dokumen untuk persalinan."
-        ]
-      ],
-      ancTitle: "Kunjungan Pemeriksaan Kehamilan (ANC)",
-      ancSubtitle: "WHO merekomendasikan 8 kontak selama kehamilan",
-      contact: "Kontak",
-      weekLabel: "Minggu",
-      done: "Selesai",
-      next: "Kunjungan berikutnya",
-      upcoming: "Mendatang",
-      notPregnant: "Tidak ada kehamilan aktif",
-      notPregnantDesc: "Perbarui profil keluarga Anda jika sedang hamil untuk mengaktifkan pemantau.",
-      updateProfile: "Perbarui Profil"
     },
     vaccines: {
       title: "Jadwal Vaksinasi",
@@ -776,9 +677,9 @@ export const TRANSLATIONS = {
     },
     paywall: {
       title: "MédLab Premium",
-      subtitle: "Akses langsung ke dokter dan bidan, kapan pun Anda membutuhkannya.",
+      subtitle: "Akses langsung ke dokter, kapan pun anak Anda membutuhkannya.",
       freeName: "Gratis",
-      freeFeatures: ["Pemeriksaan gejala AI", "Pemantau kehamilan", "Jadwal vaksinasi", "Direktori fasilitas"],
+      freeFeatures: ["Pemeriksaan gejala AI", "Jadwal vaksinasi", "Direktori fasilitas", "Peringatan darurat"],
       premiumName: "Premium",
       premiumFeatures: ["Semua fitur Gratis", "Chat tanpa batas dengan dokter", "Panggilan suara dengan spesialis", "Panduan darurat prioritas"],
       perMonth: "/ bulan",
@@ -792,14 +693,14 @@ export const TRANSLATIONS = {
     about: {
       back: "Kembali",
       title: "Tentang Médiku Labarik ",
-      bio1: "Médiku Labarik (MédLab) adalah asisten kesehatan ibu dan anak yang cerdas, dibuat untuk Timor-Leste. Didukung Kecerdasan Buatan, aplikasi ini membantu ibu dan pengasuh memahami gejala pada anak dan selama kehamilan, serta menghubungkan mereka dengan perawatan yang tepat.",
-      bio2: "Misi kami adalah mengurangi penyakit anak dan ibu yang dapat dicegah dengan menghadirkan panduan kesehatan yang terpercaya dan mudah dipahami — dalam bahasa Tetum, Inggris, dan Indonesia — ke tangan setiap keluarga.",
+      bio1: "Médiku Labarik (MédLab) adalah asisten kesehatan anak yang cerdas, dibuat untuk Timor-Leste. Didukung Kecerdasan Buatan, aplikasi ini membantu orang tua dan pengasuh memahami gejala pada anak mereka — sejak bulan pertama kehidupan — serta menghubungkan mereka dengan perawatan yang tepat.",
+      bio2: "Misi kami adalah mengurangi penyakit anak yang dapat dicegah dengan menghadirkan panduan kesehatan yang terpercaya dan mudah dipahami — dalam bahasa Tetum, Inggris, dan Indonesia — ke tangan setiap orang tua.",
       whyTitle: "Mengapa menggunakan MédLab",
       features: [
-        { title: "Dibuat untuk Ibu & Anak", desc: "Analisis sesuai umur untuk anak dan sesuai usia kehamilan untuk ibu — bukan saran umum untuk orang dewasa." },
+        { title: "Dibuat untuk Anak", desc: "Analisis disesuaikan dengan usia anak Anda dalam bulan — bukan saran umum untuk orang dewasa." },
         { title: "Instan, 24/7", desc: "Tanpa ruang tunggu. Dapatkan panduan awal dalam hitungan detik, siang atau malam, dalam bahasa Anda." },
         { title: "Dari Saran ke Tindakan", desc: "Peringatan tanda bahaya, pencocokan penyedia layanan, pengingat vaksin, dan jalur langsung ke dokter." },
-        { title: "Privasi Utama", desc: "Profil keluarga Anda tetap di perangkat Anda. Kami memprioritaskan keamanan data Anda." }
+        { title: "Privasi Utama", desc: "Catatan keluarga Anda bersifat pribadi untuk akun Anda. Kami tidak pernah menjual atau membagikan data Anda." }
       ]
     },
     faq: {
@@ -807,11 +708,11 @@ export const TRANSLATIONS = {
       items: [
         {
           q: "Apakah Médiku Labarik pengganti dokter sungguhan?",
-          a: "Tidak. MédLab adalah alat informasi untuk membantu Anda memahami kemungkinan penyebab gejala pada anak Anda atau selama kehamilan. Ini tidak dapat memberikan diagnosis medis resmi. Selalu konsultasikan keputusan medis dengan tenaga kesehatan yang berkualifikasi."
+          a: "Tidak. MédLab adalah alat informasi untuk membantu Anda memahami kemungkinan penyebab gejala pada anak Anda. Ini tidak dapat memberikan diagnosis medis resmi. Selalu konsultasikan keputusan medis dengan tenaga kesehatan yang berkualifikasi."
         },
         {
           q: "Bagaimana AI menganalisis gejala?",
-          a: "Aplikasi ini menggunakan model AI medis. Ia membandingkan gejala yang Anda jelaskan (teks atau foto) dengan pengetahuan medis — termasuk tanda bahaya anak dan tanda bahaya kehamilan — untuk menyarankan kemungkinan kondisi dan langkah berikutnya."
+          a: "Aplikasi ini menggunakan model AI medis. Ia membandingkan gejala yang Anda jelaskan (teks atau foto) dengan pengetahuan medis — termasuk tanda bahaya IMCI untuk anak — untuk menyarankan kemungkinan kondisi dan langkah berikutnya."
         },
         {
           q: "Apa yang harus saya lakukan jika aplikasi menunjukkan peringatan Darurat merah?",
@@ -819,7 +720,7 @@ export const TRANSLATIONS = {
         },
         {
           q: "Apakah data keluarga saya aman?",
-          a: "Ya. Profil keluarga dan pemeriksaan kesehatan Anda hanya disimpan di perangkat Anda sendiri. Kami tidak membagikan informasi pribadi Anda."
+          a: "Catatan anak-anak dan pemeriksaan kesehatan Anda disimpan di akun MédLab pribadi Anda, dilindungi kata sandi. Kami tidak menjual atau membagikan informasi pribadi Anda."
         },
         {
           q: "Mengapa beberapa nama penyedia layanan dalam bahasa Inggris?",
@@ -828,7 +729,7 @@ export const TRANSLATIONS = {
       ]
     },
     footer: {
-      safety: "Médiku Labarik hanya memberikan saran informatif. Untuk keputusan medis, selalu konsultasikan dengan dokter, bidan, atau fasilitas kesehatan terdekat."
+      safety: "Médiku Labarik hanya memberikan saran informatif. Untuk keputusan medis, selalu konsultasikan dengan dokter atau fasilitas kesehatan terdekat."
     },
     error: "Ada masalah selama analisis. Pastikan layanan AI berjalan dan coba lagi."
   }

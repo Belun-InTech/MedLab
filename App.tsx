@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
+import AuthScreen from './components/AuthScreen';
 import FamilyProfileSetup from './components/FamilyProfileSetup';
 import SymptomInput from './components/SymptomInput';
 import ResultsDisplay from './components/ResultsDisplay';
-import PregnancyTracker from './components/PregnancyTracker';
 import VaccinationSchedule from './components/VaccinationSchedule';
 import FacilityFinder from './components/FacilityFinder';
 import DoctorChat from './components/DoctorChat';
@@ -12,20 +12,25 @@ import DoctorCall from './components/DoctorCall';
 import SubscriptionPaywall from './components/SubscriptionPaywall';
 import About from './components/About';
 import FAQ from './components/FAQ';
-import { analyzeSymptoms, translateAnalysisResult } from './services/ollamaService';
-import { getFamilyProfile, saveFamilyProfile, isSubscribed, setSubscribed } from './services/profileService';
-import { AnalysisResult, AnalysisStatus, PatientData, Language, FamilyProfile, Specialist } from './types';
+import { analyzeSymptoms, translateAnalysisResult } from './services/analysisService';
+import { fetchChildren, saveChildren } from './services/profileService';
+import { fetchSession, logout, subscribe, SessionUser } from './services/authService';
+import { AnalysisResult, AnalysisStatus, AnalyzeRequest, Language, FamilyProfile, Specialist } from './shared/types';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { TRANSLATIONS } from './constants/translations';
 
 type ViewState =
   | 'home' | 'about' | 'faq' | 'profile'
-  | 'checker' | 'tracker' | 'vaccines' | 'facilities'
+  | 'checker' | 'vaccines' | 'facilities'
   | 'chat' | 'call' | 'subscribe';
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('home');
-  const [profile, setProfile] = useState<FamilyProfile | null>(() => getFamilyProfile());
+  // null while the session is still being restored — avoids flashing the login screen
+  // at an already signed-in user on every reload.
+  const [booting, setBooting] = useState(true);
+  const [user, setUser] = useState<SessionUser | null>(null);
+  const [profile, setProfile] = useState<FamilyProfile | null>(null);
   const [language, setLanguage] = useState<Language>('tet');
 
   const [status, setStatus] = useState<AnalysisStatus>(AnalysisStatus.IDLE);
@@ -36,8 +41,10 @@ const App: React.FC = () => {
   const [contentLanguage, setContentLanguage] = useState<Language>('tet');
   const [isTranslating, setIsTranslating] = useState(false);
 
-  const [subscribed, setSubscribedState] = useState<boolean>(() => isSubscribed());
   const [pendingDoctorAction, setPendingDoctorAction] = useState<'chat' | 'call'>('chat');
+
+  const authed = user !== null;
+  const subscribed = user?.subscribed ?? false;
 
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     const stored = localStorage.getItem('medlab_dark_mode');
@@ -55,6 +62,27 @@ const App: React.FC = () => {
   }, [darkMode]);
 
   const t = TRANSLATIONS[language];
+
+  // Restore the session (httpOnly cookie) and load the family on boot.
+  useEffect(() => {
+    (async () => {
+      try {
+        const session = await fetchSession();
+        setUser(session);
+        if (session) setProfile(await fetchChildren());
+      } catch (e) {
+        console.error('Session restore failed', e);
+      } finally {
+        setBooting(false);
+      }
+    })();
+  }, []);
+
+  // Screens swap in place, so without this a new screen inherits the previous scroll offset
+  // and appears already scrolled halfway down.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [view, authed, profile]);
 
   // Re-translate an existing analysis when the UI language changes
   useEffect(() => {
@@ -75,7 +103,7 @@ const App: React.FC = () => {
     performTranslation();
   }, [language, contentLanguage, result, status, isTranslating]);
 
-  const handleAnalyze = async (patientData: PatientData) => {
+  const handleAnalyze = async (request: Omit<AnalyzeRequest, 'language'>) => {
     setStatus(AnalysisStatus.ANALYZING);
     setError(null);
     setResult(null);
@@ -83,7 +111,7 @@ const App: React.FC = () => {
     setContentLanguage(language);
 
     try {
-      const data = await analyzeSymptoms(patientData, language);
+      const data = await analyzeSymptoms({ ...request, language });
       setResult(data);
       setStatus(AnalysisStatus.SUCCESS);
     } catch (err) {
@@ -104,9 +132,22 @@ const App: React.FC = () => {
     resetChecker();
   };
 
-  const handleProfileSave = (updated: FamilyProfile) => {
-    saveFamilyProfile(updated);
-    setProfile(updated);
+  const handleAuthenticated = async (session: SessionUser, isNewAccount: boolean) => {
+    setUser(session);
+    // A brand-new account starts with no children; an existing one loads its family.
+    setProfile(isNewAccount ? { children: [] } : await fetchChildren());
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    setUser(null);
+    setProfile(null);
+    goHome();
+  };
+
+  const handleProfileSave = async (updated: FamilyProfile) => {
+    // The server assigns real UUIDs and returns the canonical list.
+    setProfile(await saveChildren(updated.children));
     setView('home');
   };
 
@@ -121,23 +162,34 @@ const App: React.FC = () => {
     }
   };
 
-  const handleSubscribe = () => {
-    setSubscribed(true);
-    setSubscribedState(true);
+  const handleSubscribe = async () => {
+    await subscribe();
+    setUser(prev => (prev ? { ...prev, subscribed: true } : prev));
     setView(pendingDoctorAction);
   };
 
   const renderChecker = () => (
     <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
-      <button
-        onClick={goHome}
-        className="text-xs font-black uppercase tracking-widest text-slate-400 hover:text-blue-600 flex items-center gap-2 transition-colors"
-      >
-        {t.input.back}
-      </button>
+      {/* SymptomInput owns "back" while it is mounted (it has inner steps); App only owns it
+          on the results screen, where SymptomInput is unmounted. Exactly one back button. */}
+      {status === AnalysisStatus.SUCCESS && (
+        <button
+          onClick={goHome}
+          className="text-xs font-black uppercase tracking-widest text-slate-400 hover:text-blue-600 flex items-center gap-2 transition-colors"
+        >
+          {t.input.back}
+        </button>
+      )}
 
       {status !== AnalysisStatus.SUCCESS && profile && (
-        <SymptomInput profile={profile} onAnalyze={handleAnalyze} isLoading={status === AnalysisStatus.ANALYZING} t={t} />
+        <SymptomInput
+          profile={profile}
+          onAnalyze={handleAnalyze}
+          isLoading={status === AnalysisStatus.ANALYZING}
+          onBack={goHome}
+          onEditProfile={() => setView('profile')}
+          t={t}
+        />
       )}
 
       {status === AnalysisStatus.ERROR && (
@@ -185,8 +237,22 @@ const App: React.FC = () => {
   );
 
   const renderContent = () => {
-    // First launch: no family profile yet → onboarding takes over every view
-    if (!profile) {
+    // Restoring the session — don't flash the login screen at a signed-in user.
+    if (booting) {
+      return (
+        <div className="flex justify-center py-24">
+          <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
+        </div>
+      );
+    }
+
+    // Sign-up / login gates everything
+    if (!authed) {
+      return <AuthScreen onAuthenticated={handleAuthenticated} currentLang={language} onLanguageChange={setLanguage} t={t} />;
+    }
+
+    // First launch: no children registered yet → onboarding takes over every view
+    if (!profile || profile.children.length === 0) {
       return <FamilyProfileSetup existingProfile={null} onSave={handleProfileSave} t={t} />;
     }
 
@@ -199,8 +265,6 @@ const App: React.FC = () => {
         return <FamilyProfileSetup existingProfile={profile} onSave={handleProfileSave} onCancel={goHome} t={t} />;
       case 'checker':
         return renderChecker();
-      case 'tracker':
-        return <PregnancyTracker profile={profile} language={language} t={t} onBack={goHome} onEditProfile={() => setView('profile')} />;
       case 'vaccines':
         return <VaccinationSchedule profile={profile} t={t} onBack={goHome} onEditProfile={() => setView('profile')} />;
       case 'facilities':
@@ -218,8 +282,8 @@ const App: React.FC = () => {
         return (
           <Dashboard
             profile={profile}
+            parentName={user?.name ?? ''}
             onCheckSymptoms={() => { resetChecker(); setView('checker'); }}
-            onOpenTracker={() => setView('tracker')}
             onOpenVaccines={() => setView('vaccines')}
             onTalkToDoctor={() => handleTalkToDoctor(null, 'chat')}
             onOpenFacilities={() => setView('facilities')}
@@ -231,18 +295,21 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col font-sans text-slate-900 dark:text-slate-100 transition-colors duration-200">
-      <Header
-        onLogoClick={goHome}
-        onHomeClick={goHome}
-        onFaqClick={() => setView('faq')}
-        onAboutClick={() => setView('about')}
-        onProfileClick={() => setView('profile')}
-        currentLang={language}
-        onLanguageChange={setLanguage}
-        t={t}
-        darkMode={darkMode}
-        onToggleDarkMode={() => setDarkMode(!darkMode)}
-      />
+      {authed && (
+        <Header
+          onLogoClick={goHome}
+          onHomeClick={goHome}
+          onFaqClick={() => setView('faq')}
+          onAboutClick={() => setView('about')}
+          onProfileClick={() => setView('profile')}
+          onLogoutClick={handleLogout}
+          currentLang={language}
+          onLanguageChange={setLanguage}
+          t={t}
+          darkMode={darkMode}
+          onToggleDarkMode={() => setDarkMode(!darkMode)}
+        />
+      )}
 
       <main className="flex-grow container mx-auto px-4 py-8 sm:py-12">
         {renderContent()}

@@ -1,4 +1,4 @@
-import { VaccineDose } from "../types";
+import { VaccineDose } from "../shared/types";
 
 // Timor-Leste EPI (Expanded Programme on Immunization) childhood schedule.
 // ageMonths uses fractions for week-based doses (6 wk ≈ 1.4 mo, 10 wk ≈ 2.3 mo, 14 wk ≈ 3.2 mo).

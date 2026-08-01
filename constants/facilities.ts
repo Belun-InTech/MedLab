@@ -1,4 +1,4 @@
-import { HealthFacility } from "../types";
+import { HealthFacility } from "../shared/types";
 
 export const MUNICIPALITIES = [
   'Dili', 'Baucau', 'Bobonaro', 'Ainaro', 'Aileu', 'Covalima',

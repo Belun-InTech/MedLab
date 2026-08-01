@@ -8,13 +8,12 @@ import {
   MapPin,
   ArrowRight
 } from 'lucide-react';
-import { FamilyProfile } from '../types';
-import { gestationalWeek } from '../services/profileService';
+import { FamilyProfile } from '../shared/types';
 
 interface DashboardProps {
   profile: FamilyProfile;
+  parentName: string;
   onCheckSymptoms: () => void;
-  onOpenTracker: () => void;
   onOpenVaccines: () => void;
   onTalkToDoctor: () => void;
   onOpenFacilities: () => void;
@@ -22,11 +21,11 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({
-  profile, onCheckSymptoms, onOpenTracker, onOpenVaccines, onTalkToDoctor, onOpenFacilities, t
+  profile, parentName, onCheckSymptoms, onOpenVaccines, onTalkToDoctor, onOpenFacilities, t
 }) => {
   const th = t.home;
-  const firstName = profile.mother.name.split(' ')[0];
-  const week = profile.mother.pregnant && profile.mother.lmp ? gestationalWeek(profile.mother.lmp) : null;
+  const firstName = parentName.split(' ')[0];
+  const childCount = profile.children.length;
 
   return (
     <div className="space-y-6 sm:space-y-10 animate-fade-in max-w-5xl mx-auto">
@@ -57,15 +56,15 @@ const Dashboard: React.FC<DashboardProps> = ({
             </div>
           </div>
 
-          {week !== null && (
+          {childCount > 0 && (
             <button
-              onClick={onOpenTracker}
+              onClick={onCheckSymptoms}
               className="w-40 h-40 sm:w-52 sm:h-52 flex-shrink-0 rounded-full bg-white/40 dark:bg-blue-900/40 border-4 border-white/50 dark:border-blue-300/20 shadow-2xl flex flex-col items-center justify-center hover:scale-105 transition-transform"
             >
-              <Baby className="w-8 h-8 text-pink-600 dark:text-pink-300 mb-1" />
-              <span className="text-5xl font-black leading-none">{Math.min(week, 42)}</span>
-              <span className="text-[10px] font-black uppercase tracking-widest opacity-70 mt-1">
-                {t.tracker.week} {t.tracker.of40}
+              <Baby className="w-8 h-8 text-blue-700 dark:text-blue-300 mb-1" />
+              <span className="text-5xl font-black leading-none">{childCount}</span>
+              <span className="text-[10px] font-black uppercase tracking-widest opacity-70 mt-1 px-4 text-center">
+                {t.onboarding.childrenSection}
               </span>
             </button>
           )}
@@ -80,13 +79,6 @@ const Dashboard: React.FC<DashboardProps> = ({
           desc={th.cards.checkerDesc}
           onClick={onCheckSymptoms}
           color="blue"
-        />
-        <ActionCard
-          icon={<Baby className="w-8 h-8 text-pink-600 dark:text-pink-400" />}
-          title={th.cards.tracker}
-          desc={th.cards.trackerDesc}
-          onClick={onOpenTracker}
-          color="pink"
         />
         <ActionCard
           icon={<Syringe className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />}

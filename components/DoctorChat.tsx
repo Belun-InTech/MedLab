@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, ArrowLeft, Phone, FlaskConical } from 'lucide-react';
-import { Specialist } from '../types';
+import { Specialist } from '../shared/types';
 import { MOCK_SPECIALISTS } from '../constants/medicalData';
 
 interface DoctorChatProps {
