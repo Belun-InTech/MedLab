@@ -1,24 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {
-  Menu,
-  Info,
-  HelpCircle,
-  Globe,
-  Sun,
-  Moon,
-  Home,
-  Users,
-  LogOut
-} from 'lucide-react';
+import { Menu, Globe, Sun, Moon } from 'lucide-react';
 import { Language } from '../shared/types';
+import { HeaderMenuItem } from './shell';
 
 interface HeaderProps {
   onLogoClick: () => void;
-  onHomeClick: () => void;
-  onFaqClick: () => void;
-  onAboutClick: () => void;
-  onProfileClick: () => void;
-  onLogoutClick: () => void;
+  /** Supplied by the role shell — a doctor's menu is not a parent's menu. */
+  menuItems: HeaderMenuItem[];
   currentLang: Language;
   onLanguageChange: (lang: Language) => void;
   t: any;
@@ -28,11 +16,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({
   onLogoClick,
-  onHomeClick,
-  onFaqClick,
-  onAboutClick,
-  onProfileClick,
-  onLogoutClick,
+  menuItems,
   currentLang,
   onLanguageChange,
   t,
@@ -58,14 +42,6 @@ const Header: React.FC<HeaderProps> = ({
     tet: 'Tetum',
     id: 'Indo'
   };
-
-  const menuItems = [
-    { icon: <Home className="w-4 h-4 text-emerald-500" />, iconBg: 'bg-emerald-50 dark:bg-emerald-900/30', title: t.header.howItWorks, subtitle: t.header.howItWorksSubtitle, action: onHomeClick },
-    { icon: <Info className="w-4 h-4 text-blue-500" />, iconBg: 'bg-blue-50 dark:bg-blue-900/30', title: t.header.aboutMenuTitle, subtitle: t.header.aboutMenuSubtitle, action: onAboutClick },
-    { icon: <HelpCircle className="w-4 h-4 text-purple-500" />, iconBg: 'bg-purple-50 dark:bg-purple-900/30', title: t.header.faq, subtitle: t.header.faqSubtitle, action: onFaqClick },
-    { icon: <Users className="w-4 h-4 text-orange-500" />, iconBg: 'bg-orange-50 dark:bg-orange-900/30', title: t.header.editProfile, subtitle: t.header.editProfileSubtitle, action: onProfileClick },
-    { icon: <LogOut className="w-4 h-4 text-red-500" />, iconBg: 'bg-red-50 dark:bg-red-900/30', title: t.header.logout, subtitle: t.header.logoutSubtitle, action: onLogoutClick },
-  ];
 
   return (
     <div className="sticky top-0 z-50 w-full">

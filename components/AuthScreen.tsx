@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { ArrowRight, Mail, Lock, User as UserIcon, Calendar, Globe } from 'lucide-react';
+import { ArrowRight, Mail, Lock, User as UserIcon, Calendar, Globe, Stethoscope } from 'lucide-react';
 import { signup, login, isAdult, SessionUser } from '../services/authService';
+import DoctorSignupForm from './DoctorSignupForm';
 import { Language } from '../shared/types';
 
 interface AuthScreenProps {
-  onAuthenticated: (user: SessionUser, isNewAccount: boolean) => void;
+  onAuthenticated: (user: SessionUser) => void;
   currentLang: Language;
   onLanguageChange: (lang: Language) => void;
   t: any;
@@ -12,7 +13,8 @@ interface AuthScreenProps {
 
 const LANGUAGE_LABELS: Record<Language, string> = { en: 'English', tet: 'Tetun', id: 'Indo' };
 
-type Mode = 'login' | 'signup';
+/** 'doctor' swaps the card for the health-professional form; the parent path is untouched. */
+type Mode = 'login' | 'signup' | 'doctor';
 
 const inputClass = "w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none dark:text-white transition-all shadow-sm";
 const labelClass = "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2";
@@ -56,7 +58,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthenticated, currentLang, o
       if (mode === 'signup') {
         const result = await signup({ name: name.trim(), email: email.trim(), password, dob });
         if (result.status === 'ok') {
-          onAuthenticated(result.user, true);
+          onAuthenticated(result.user);
         } else {
           setError(
             result.reason === 'under_age' ? ta.underAge
@@ -68,7 +70,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthenticated, currentLang, o
       } else {
         const result = await login(email, password);
         if (result.status === 'ok') {
-          onAuthenticated(result.user, false);
+          onAuthenticated(result.user);
         } else {
           setError(result.reason === 'network' ? ta.networkError : ta.invalidCredentials);
         }
@@ -118,10 +120,13 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthenticated, currentLang, o
         </div>
         <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-2">{ta.welcomeTitle}</h2>
         <p className="text-slate-500 dark:text-slate-400">
-          {mode === 'login' ? ta.loginSubtitle : ta.signupSubtitle}
+          {mode === 'doctor' ? ta.doctorSignupSubtitle : mode === 'login' ? ta.loginSubtitle : ta.signupSubtitle}
         </p>
       </div>
 
+      {mode === 'doctor' ? (
+        <DoctorSignupForm onRegistered={onAuthenticated} onCancel={() => switchMode('login')} t={t} />
+      ) : (
       <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 sm:p-8 shadow-sm space-y-6">
         {/* Mode tabs */}
         <div className="flex gap-2 p-1 bg-slate-100 dark:bg-slate-900 rounded-2xl">
@@ -234,7 +239,20 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthenticated, currentLang, o
         >
           {mode === 'login' ? ta.noAccountYet : ta.haveAccount}
         </button>
+
+        {/* Doctors register through their own route; the parent path above is unchanged. */}
+        <div className="pt-4 border-t border-slate-100 dark:border-slate-700">
+          <button
+            type="button"
+            onClick={() => switchMode('doctor')}
+            className="w-full flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-blue-600 transition-colors"
+          >
+            <Stethoscope className="w-4 h-4" />
+            {ta.doctorSignupLink}
+          </button>
+        </div>
       </div>
+      )}
 
       <p className="text-[11px] text-slate-400 dark:text-slate-600 text-center mt-6 leading-relaxed">
         {ta.demoNote}

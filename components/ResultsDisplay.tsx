@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { AnalysisResult, Condition, Specialist } from '../shared/types';
+import React, { useState } from 'react';
+import { AnalysisResult, Condition, DoctorSpecialty, Specialist } from '../shared/types';
 import {
   Info,
   ChevronDown,
@@ -9,60 +9,46 @@ import {
   Stethoscope,
   ShieldAlert,
   Check,
-  Filter,
-  MessageCircleHeart,
+  CalendarPlus,
+  MapPin,
   PhoneCall
 } from 'lucide-react';
-import { MOCK_SPECIALISTS } from '../constants/medicalData';
+import DoctorDirectory from './DoctorDirectory';
+import DoctorUpsell from './DoctorUpsell';
 
 interface ResultsDisplayProps {
   result: AnalysisResult;
   t: any;
+  /** Doctor access is the premium feature — this decides list vs offer. */
+  subscribed: boolean;
   selectedSpecialist: Specialist | null;
   onSpecialistSelect: (specialist: Specialist) => void;
   onTalkToDoctor: (specialist: Specialist | null) => void;
+  onBookAppointment: (specialist: Specialist) => void;
+  /** The free emergency route: the nearest hospital or clinic. */
+  onFindFacilities: () => void;
+  onSubscribe: () => void;
 }
 
-type AvailabilityFilter = 'all' | 'today' | 'tomorrow' | 'later';
+/**
+ * The AI returns one of exactly two canonical English specialty names (normalised in
+ * server/src/routes/consultations.ts), so matching a recommendation to real doctors is a
+ * plain equality rather than the substring guessing this screen used to do.
+ */
+const asSpecialty = (recommended: string): DoctorSpecialty =>
+  recommended === 'Pediatrician' ? 'Pediatrician' : 'General Practitioner';
 
 const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   result,
   t,
+  subscribed,
   selectedSpecialist,
   onSpecialistSelect,
-  onTalkToDoctor
+  onTalkToDoctor,
+  onBookAppointment,
+  onFindFacilities,
+  onSubscribe
 }) => {
-  const [filteredSpecialists, setFilteredSpecialists] = useState<Specialist[]>([]);
-  const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>('all');
-
-  useEffect(() => {
-    const recommended = (result?.recommendedSpecialist || '').toLowerCase();
-
-    let matches = MOCK_SPECIALISTS.filter(s => s.specialty.toLowerCase() === recommended);
-
-    if (matches.length === 0) {
-      matches = MOCK_SPECIALISTS.filter(s =>
-        recommended.includes(s.specialty.toLowerCase()) ||
-        s.specialty.toLowerCase().includes(recommended)
-      );
-    }
-
-    if (matches.length === 0) {
-      matches = MOCK_SPECIALISTS.filter(s => s.specialty === "General Practitioner");
-    }
-
-    if (availabilityFilter !== 'all') {
-      matches = matches.filter(s => {
-        const avail = s.availability.toLowerCase();
-        if (availabilityFilter === 'today') return avail.includes('today');
-        if (availabilityFilter === 'tomorrow') return avail.includes('tomorrow');
-        return !avail.includes('today') && !avail.includes('tomorrow');
-      });
-    }
-
-    setFilteredSpecialists(matches);
-  }, [result, availabilityFilter]);
-
   if (!result) return null;
 
   return (
@@ -77,13 +63,28 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
              <p className="text-red-700 dark:text-red-400 leading-relaxed font-medium">
                {result.emergencyMessage || t.results.emergencyDefault}
              </p>
-             <button
-               onClick={() => onTalkToDoctor(selectedSpecialist)}
-               className="mt-4 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-sm transition-colors text-sm flex items-center gap-2"
-             >
-               <PhoneCall className="w-4 h-4" />
-               {t.results.seekEmergency}
-             </button>
+             {/* The nearest facility is the free action, and for a danger sign it is also
+                 the right one — so it is the primary CTA for both tiers. Premium adds the
+                 doctor on top of it rather than replacing it. */}
+             <div className="mt-4 flex flex-wrap gap-2">
+               <button
+                 onClick={onFindFacilities}
+                 className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-sm transition-colors text-sm flex items-center gap-2"
+               >
+                 <MapPin className="w-4 h-4" />
+                 {t.results.emergencyFindFacility}
+               </button>
+
+               {subscribed && (
+                 <button
+                   onClick={() => onTalkToDoctor(selectedSpecialist)}
+                   className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 font-bold rounded-xl shadow-sm transition-colors text-sm flex items-center gap-2 hover:bg-red-50 dark:hover:bg-red-900/20"
+                 >
+                   <PhoneCall className="w-4 h-4" />
+                   {t.results.seekEmergency}
+                 </button>
+               )}
+             </div>
            </div>
         </div>
       )}
@@ -125,7 +126,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
               {t.specialistNames[result.recommendedSpecialist] || result.recommendedSpecialist || "General"}
             </span>
           </h3>
-          {selectedSpecialist && (
+          {subscribed && selectedSpecialist && (
             <div className="bg-blue-50 dark:bg-blue-900/30 px-3 py-1.5 rounded-xl border border-blue-100 dark:border-blue-800 flex items-center gap-2">
               <Check className="w-4 h-4 text-blue-600" />
               <span className="text-xs font-bold text-blue-700 dark:text-blue-400">{selectedSpecialist.name} {t.results.specialistChosen}</span>
@@ -133,95 +134,40 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           )}
         </div>
 
-        {/* Availability Filter */}
-        <div className="space-y-3">
-          <div className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-widest">
-            <Filter className="w-3.5 h-3.5" />
-            {t.results.filterLabel}
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {(['all', 'today', 'tomorrow', 'later'] as AvailabilityFilter[]).map((filter) => (
-              <button
-                key={filter}
-                onClick={() => setAvailabilityFilter(filter)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border
-                  ${availabilityFilter === filter
-                    ? 'bg-blue-600 border-blue-600 text-white shadow-md'
-                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-300'}`}
-              >
-                {t.results[`filter${filter.charAt(0).toUpperCase() + filter.slice(1)}`]}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {filteredSpecialists.length > 0 ? (
-          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
-            {filteredSpecialists.map((specialist) => {
-              const isSelected = selectedSpecialist?.id === specialist.id;
-
-              return (
-                <div
-                  key={specialist.id}
-                  className={`relative bg-white dark:bg-slate-800 border transition-all duration-300 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md
-                    ${isSelected ? 'border-blue-500 ring-2 ring-blue-500/10' : 'border-slate-200 dark:border-slate-700'}`}
-                >
-                  <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 border-2 border-slate-100 dark:border-slate-700">
-                    <img src={specialist.image} alt={specialist.name} className="w-full h-full object-cover" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-slate-900 dark:text-white truncate">{specialist.name}</h4>
-                      <p className="text-xs text-purple-600 dark:text-purple-400 font-semibold uppercase truncate">
-                        {t.specialistNames[specialist.specialty] || specialist.specialty}
-                      </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{specialist.hospital}</p>
-                      <p className={`text-[10px] font-bold mt-1 ${specialist.availability.includes('Today') ? 'text-emerald-500' : 'text-slate-400'}`}>
-                        {specialist.availability}
-                      </p>
-
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        <button
-                          onClick={() => onSpecialistSelect(specialist)}
-                          className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg transition-all
-                            ${isSelected
-                              ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
-                              : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-blue-50 hover:text-blue-600'}`}
-                        >
-                          {isSelected ? t.results.specialistChosen : t.results.choose}
-                        </button>
-
-                        {isSelected && (
-                          <button
-                            onClick={() => onTalkToDoctor(specialist)}
-                            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-all shadow-md shadow-blue-500/20 active:scale-[0.95] border border-blue-500"
-                          >
-                            <MessageCircleHeart className="w-3.5 h-3.5" />
-                            {t.results.talkToDoctor}
-                          </button>
-                        )}
-                      </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+        {/* Doctor access is what Premium buys, so an unsubscribed parent gets the offer
+            here rather than the directory. Emergencies do NOT reveal it — the emergency
+            route for both tiers is the facility finder in the banner above. */}
+        {!subscribed ? (
+          <DoctorUpsell
+            specialty={asSpecialty(result.recommendedSpecialist)}
+            t={t}
+            onSubscribe={onSubscribe}
+          />
         ) : (
-          <div className="p-8 bg-slate-50 dark:bg-slate-900 rounded-3xl text-center border border-dashed border-slate-200 dark:border-slate-700">
-            <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3">
-               <Filter className="w-6 h-6 text-slate-300" />
-            </div>
-            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
-              {t.results.noSpecialist}
-            </p>
-            {availabilityFilter !== 'all' && (
+        <DoctorDirectory
+          t={t}
+          selectedSpecialist={selectedSpecialist}
+          onSpecialistSelect={onSpecialistSelect}
+          initialSpecialty={asSpecialty(result.recommendedSpecialist)}
+          renderAction={(specialist) => (
+            <>
               <button
-                onClick={() => setAvailabilityFilter('all')}
-                className="mt-3 text-xs font-bold text-blue-600 hover:underline"
+                onClick={() => onBookAppointment(specialist)}
+                className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-all shadow-md shadow-blue-500/20 active:scale-[0.95] border border-blue-500"
               >
-                {t.results.filterAll}
+                <CalendarPlus className="w-3.5 h-3.5" />
+                {t.booking.bookAppointment}
               </button>
-            )}
-          </div>
+              <button
+                onClick={() => onTalkToDoctor(specialist)}
+                className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-all"
+              >
+                <PhoneCall className="w-3.5 h-3.5" />
+                {t.results.talkToDoctor}
+              </button>
+            </>
+          )}
+        />
         )}
       </div>
 

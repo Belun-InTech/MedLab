@@ -25,5 +25,9 @@
     },
     "allowImportingTsExtensions": true,
     "noEmit": true
-  }
+  },
+  // The server has its own tsconfig with "strict": true. Without this exclude the root
+  // config also compiles server/, but non-strict — which silently disables the narrowing
+  // the server code is written against. `npm run typecheck` runs both configs.
+  "exclude": ["node_modules", "dist", "dist-server", "server"]
 }
