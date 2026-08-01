@@ -28,7 +28,7 @@ const About: React.FC<AboutProps> = ({ onBack, t }) => {
           
           <div className="relative z-10">
             <h1 className="text-3xl text-slate-900 dark:text-white mb-6 font-['Baumans']">
-              {t.about.title}<span className="text-blue-600 dark:text-blue-400">AI</span>
+              {t.about.title}<span className="text-blue-600 dark:text-blue-400">(MédLab)</span>
             </h1>
             <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-lg mb-4">
               {t.about.bio1}

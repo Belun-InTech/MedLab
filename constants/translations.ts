@@ -1,917 +1,835 @@
-
-import { Language } from "../types";
-
 export const TRANSLATIONS = {
   en: {
     hero: {
-      title: "Identify Symptoms.",
-      subtitle: "Get help fast.",
-      desc: "Powered by advanced Artificial Intelligence to help you understand your symptoms and guide you to the best course of action."
+      title: "Care for your child.",
+      subtitle: "Care for your pregnancy.",
+      desc: "Médiku Labarik uses Artificial Intelligence to help mothers and caregivers in Timor-Leste understand symptoms in children and during pregnancy — and guides you to the right care."
     },
     header: {
-      howItWorks: "How it Works",
+      aboutMenuTitle: "About MédLab",
+      aboutMenuSubtitle: "What is it & why use it?",
+      howItWorks: "Home",
+      howItWorksSubtitle: "Back to your dashboard",
       faq: "FAQ",
-      emergency: "Emergency",
-      system: "Operational System",
-      aboutMenuTitle: "About MurakMed-AI",
-      aboutMenuSubtitle: "What Is It & Why use it?",
-      doctorPortal: "Doctor Portal",
-      patientMode: "Switch to Patient Mode"
+      faqSubtitle: "Common questions",
+      editProfile: "Family Profile",
+      editProfileSubtitle: "Edit mother & children",
+      language: "Language"
     },
-    doctor: {
-      dashboard: "Specialist Dashboard",
-      welcome: "Welcome, Dr.",
-      upcoming: "Upcoming Appointments",
-      availability: "My Availability",
-      noAppointments: "No upcoming appointments scheduled.",
-      patient: "Patient",
-      symptoms: "Symptoms",
-      time: "Time",
-      status: "Status",
-      manageSlots: "Manage Slots",
-      updateStatus: "Update Status",
-      currentStatus: "Current Status",
-      available: "Available Today",
-      unavailable: "Unavailable Today",
-      tomorrow: "Available Tomorrow",
-      busy: "Busy/Fully Booked",
-      saveStatus: "Save Status",
-      viewRecord: "View Medical Record",
-      notified: "You will be notified of new bookings."
-    },
-    auscultation: {
-      title: "Specialist Auscultation Test",
-      subtitle: "Professional physical examination and sound analysis",
-      heart: "Heart Sounds",
-      lung: "Lung Sounds",
-      bowel: "Bowel Sounds",
-      findings: "Clinical Findings",
-      performBtn: "Run Auscultation Test",
-      saveBtn: "Save Examination Results",
-      heartPlaceholder: "Describe heart rhythm and sounds (e.g., S1, S2 audible, no murmurs)",
-      lungPlaceholder: "Describe breath sounds (e.g., Clear bilaterally, no wheezing)",
-      bowelPlaceholder: "Describe abdominal sounds (e.g., Normoactive)",
-      findingsPlaceholder: "Summary of physical examination findings",
-      success: "Auscultation results recorded successfully.",
-      viewResults: "View Exam Results"
-    },
-    scheduler: {
-      title: "Schedule Appointment",
-      selectDate: "Choose a Date",
-      selectTime: "Select Time Slot",
-      confirm: "Confirm Booking",
-      morning: "Morning",
-      afternoon: "Afternoon",
-      evening: "Evening",
-      selected: "Selected",
-      success: "Appointment Saved Successfully!",
-      backToResults: "← Back to Results",
-      pendingChoice: "Pending Choice",
-      bookNow: "Book Appointment",
-      reminders: {
-        title: "Reminders",
-        enable: "Set a reminder for this appointment",
-        method: "Reminder Method",
-        email: "Email Notification",
-        app: "In-App Notification",
-        timing: "When to remind?",
-        opt1: "1 hour before",
-        opt2: "12 hours before",
-        opt3: "1 day before"
-      }
-    },
-    dashboard: {
-      welcomeSub: "Welcome to the Future of Health",
+    home: {
+      welcomeSub: "Maternal & Child Health Companion",
       hello: "Hello",
-      heroDesc: "MurakMed-AI isn't just a symptom analysis tool. It's your intelligent health companion, bridging the gap between complexity and care.",
-      actions: {
-        newAnalysis: "New Analysis",
-        newAnalysisDesc: "Check your symptoms with AI",
-        history: "Medical History",
-        historyDesc: "Review your past reports",
-        profile: "Profile Settings",
-        profileDesc: "Manage your identity"
-      },
-      insights: {
-        title: "The Power of MurakMed-AI",
-        subtitle: "Leveraging the world's most advanced AI models to provide localized healthcare insights for Timor-Leste.",
-        item1Title: "Instant Intelligence",
-        item1Desc: "Seconds to analyze, minutes to action. We eliminate waiting.",
-        item2Title: "Verified Guidance",
-        item2Desc: "Condition-specialist mapping to ensure you see the right doctor.",
-        item3Title: "Empathetic Tech",
-        item3Desc: "Built for people, with simple language and caring insights."
+      heroDesc: "Your family's health assistant: check symptoms, follow your pregnancy, keep vaccines on time, and reach a doctor when you need one.",
+      cards: {
+        checker: "Check Symptoms",
+        checkerDesc: "AI analysis for your child or your pregnancy",
+        tracker: "Pregnancy Tracker",
+        trackerDesc: "Follow your pregnancy week by week",
+        vaccines: "Vaccinations",
+        vaccinesDesc: "Keep your children's vaccines on schedule",
+        doctor: "Talk to a Doctor",
+        doctorDesc: "Chat or call a health professional",
+        facilities: "Find a Facility",
+        facilitiesDesc: "Hospitals and health centers near you"
       }
     },
-    auth: {
-      login: {
-        title: "Welcome Back",
-        subtitle: "Sign in to your MurakMed account",
-        username: "Username",
-        password: "Password",
-        forgot: "Forgot?",
-        signIn: "Sign In",
-        noAccount: "New to MurakMed?",
-        createAccount: "Create Account",
-        recent: "Recently used on this device",
-        error: "Invalid credentials. Try 'Sarah Silva' / 'doctor123'",
-        cancel: "Cancel",
-        doctorLogin: "Doctor/Specialist Login"
-      },
-      signup: {
-        title: "Create Account",
-        subtitle: "Join MurakMed AI to track your health journey",
-        firstName: "First Name",
-        lastName: "Last Name",
-        email: "Email Address",
-        username: "Username",
-        password: "Password",
-        dob: "Date of Birth",
-        sex: "Sex",
-        uploadPhoto: "Upload Profile Photo",
-        complete: "Complete Signup",
-        haveAccount: "Already have an account?",
-        signIn: "Sign In",
-        error: "Signup failed. Please try again.",
-        cancel: "Cancel"
-      },
-      reset: {
-        title: "Reset Password",
-        subtitle: "Verify your identity to secure your account",
-        findAccount: "Find Account",
-        backToLogin: "Back to Login",
-        hello: "Hello",
-        newPass: "New Password",
-        confirmPass: "Confirm Password",
-        mismatch: "Passwords do not match.",
-        length: "Password must be at least 5 characters long.",
-        successTitle: "Password Updated!",
-        successDesc: "Your account is now secure. Redirecting you to login...",
-        goNow: "Go Now",
-        notYourAccount: "Not your account?"
-      },
-      profile: {
-        title: "Account Settings",
-        subtitle: "Manage your medical profile and security",
-        save: "Save Profile Changes",
-        success: "Profile updated successfully!",
-        back: "Back"
-      }
+    onboarding: {
+      title: "Welcome to Médiku Labarik",
+      subtitle: "Tell us about your family so we can personalize your care. Everything stays on this device.",
+      editTitle: "Family Profile",
+      momSection: "About the mother",
+      momName: "Mother's name",
+      momDob: "Date of birth (optional)",
+      pregnantQ: "Are you currently pregnant?",
+      yes: "Yes",
+      no: "No",
+      lmp: "First day of your last menstrual period",
+      lmpHelp: "We use this to calculate your pregnancy week and due date.",
+      childrenSection: "Your children",
+      addChild: "Add a child",
+      childName: "Child's name",
+      childDob: "Date of birth",
+      childSex: "Sex",
+      boy: "Boy",
+      girl: "Girl",
+      remove: "Remove",
+      noChildrenHint: "You can add children now or later.",
+      save: "Save & Continue",
+      nameRequired: "Please enter the mother's name."
     },
-    history: {
-      title: "Medical History",
-      noRecords: "No medical history records found yet.",
-      startNew: "Start a new symptom check to create a record.",
-      visits: "Visits",
-      lastUpdate: "Last Update",
-      snapshot: "Symptom Snapshot:",
-      reference: "Reference ID",
-      reportTitle: "Medical Report",
-      verifiedPatient: "Verified Patient",
-      symptoms: "Reported Symptoms",
-      notes: "Doctor's Notes / Summary",
-      noNotes: "No additional notes recorded for this visit.",
-      primaryDiagnosis: "Primary Diagnosis",
-      specialist: "Recommended Specialist",
-      archive: "Full Analysis Archive",
-      notAvailable: "Detailed AI analysis data not available for this record.",
-      pendingSpecialist: "Pending Specialist Selection"
-    },
-    certificate: {
-      title: "MEDICAL CERTIFICATE",
-      subTitle: "Artificial Intelligence Health Assessment",
-      certId: "Certificate ID",
-      issuedDate: "Date of Issue",
-      patientInfo: "Patient Information",
-      clinicalFindings: "Clinical Findings & AI Analysis",
-      primaryDiagnosis: "Primary Suggested Condition",
-      probability: "Likelihood",
-      reportedSymptoms: "Reported Symptoms",
-      recommendations: "Recommendations",
-      advice: "General Health Advice",
-      disclaimer: "DISCLAIMER: This certificate is generated by AI for informational purposes only. It does not replace a physical examination by a registered medical practitioner. Please consult a doctor for a definitive diagnosis.",
-      verified: "AI VERIFIED",
-      downloadBtn: "Download Certificate (PDF)",
-      notAvailable: "Certificate will be available after your specialist meeting."
+    selector: {
+      title: "Who needs help today?",
+      subtitle: "Choose who you want to check symptoms for.",
+      mother: "Mother",
+      pregnantBadge: "Pregnant",
+      week: "Week",
+      months: "months",
+      years: "years",
+      notPregnantNote: "Pregnancy check is available when the profile says you are pregnant."
     },
     input: {
-      title: "Patient Info & Symptoms",
-      desc: "Provide clear details to get accurate results.",
-      name: "Full Name",
-      dob: "Date of Birth",
+      title: "Describe the Symptoms",
+      desc: "Provide clear details to get accurate guidance.",
+      forPatient: "Checking for",
       age: "Age",
-      sex: "Sex",
-      sexOptions: {
-        select: "Select (Optional)...",
-        male: "Male",
-        female: "Female",
-        other: "Other"
-      },
-      address: "Address",
-      addressPlaceholder: "Street, City (Optional)",
+      weight: "Weight (kg, optional)",
+      weightPlaceholder: "e.g., 12",
+      gestationalAge: "Pregnancy week",
       onset: "When did it start?",
       onsetPlaceholder: "e.g., 2 days ago (Optional)",
       symptomsLabel: "Describe Symptoms",
-      symptomsPlaceholder: "Describe what the patient is feeling, or upload an image...",
+      symptomsPlaceholder: "Describe what is happening, or upload a photo...",
       imagePlaceholder: "Add optional text to describe the image...",
       quickAdd: "Quick Add:",
       uploadBtn: "Add Photo",
       changePhoto: "Change Photo",
-      analyzeBtn: "Record & Analyze",
+      analyzeBtn: "Analyze",
       analyzing: "Analyzing...",
-      fileError: "File too large. Please upload an image under 5MB."
+      fileError: "File too large. Please upload an image under 5MB.",
+      back: "← Back"
     },
-    commonSymptoms: ["Headache", "Fever", "Cough", "Nausea", "Fatigue", "Sore Throat", "Itchy Skin", "Dizziness"],
+    childSymptoms: ["Fever", "Cough", "Diarrhea", "Vomiting", "Not eating", "Rash", "Fast breathing", "Crying a lot"],
+    pregnancySymptoms: ["Nausea", "Headache", "Swelling", "Bleeding", "Abdominal pain", "Dizziness", "Less baby movement", "Back pain"],
     results: {
       title: "Analysis Results",
-      recordSaved: "Saved to History",
-      recordFailed: "Save Failed",
-      newRecord: "New Record",
+      newRecord: "New Check",
+      translating: "Auto-translating to",
       emergencyTitle: "Potential Medical Emergency",
-      emergencyDefault: "Your symptoms indicate a serious condition. Please seek immediate medical attention or call emergency services.",
-      seekEmergency: "Seek Emergency Services",
+      emergencyDefault: "These symptoms may indicate a serious condition. Please go to the nearest health facility immediately.",
+      seekEmergency: "Call a Doctor Now",
       conditionsTitle: "Possible Conditions",
       recommendedAction: "Recommended Actions",
       whyThis: "Why this matches:",
       medications: "Suggested Medications & Treatments",
       dosage: "Dosage:",
       nextStep: "NEXT STEP",
-      disclaimer: "MurakMed AI provides information only. It does not substitute professional medical advice, diagnosis, or treatment.",
-      specialistsTitle: "Recommended Specialists",
-      callDoctor: "Call Doctor",
+      disclaimer: "Médiku Labarik provides information only. It does not substitute professional medical advice, diagnosis, or treatment.",
+      selectSpecialist: "Choose a care provider",
+      specialistChosen: "Chosen",
+      choose: "Choose",
       noSpecialist: "No specific specialist available for this condition. Please consult a General Practitioner.",
-      selectSpecialist: "Choose preferred specialist",
-      specialistChosen: "Specialist chosen",
       filterLabel: "Filter by availability:",
       filterAll: "All",
       filterToday: "Available Today",
       filterTomorrow: "Tomorrow",
-      filterLater: "Later"
+      filterLater: "Later",
+      talkToDoctor: "Talk to this Doctor"
     },
     specialistNames: {
       "General Practitioner": "General Practitioner",
-      "Cardiologist": "Cardiologist",
-      "Dermatologist": "Dermatologist",
-      "Neurologist": "Neurologist",
       "Pediatrician": "Pediatrician",
-      "ENT Specialist": "ENT Specialist",
-      "Internal Medicine": "Internal Medicine",
-      "Ophthalmologist": "Ophthalmologist",
-      "Orthopedic Surgeon": "Orthopedic Surgeon",
       "Obstetrician-Gynecologist": "Obstetrician-Gynecologist",
-      "Dentist": "Dentist",
-      "Psychiatrist": "Psychiatrist"
+      "Midwife": "Midwife"
+    },
+    tracker: {
+      title: "Pregnancy Tracker",
+      subtitle: "Following your journey week by week",
+      week: "Week",
+      of40: "of 40",
+      trimester: "Trimester",
+      trimesterNames: ["First trimester", "Second trimester", "Third trimester"],
+      dueDate: "Estimated due date",
+      daysToGo: "days to go",
+      overdueNote: "Past the estimated due date — please see your midwife.",
+      tipsTitle: "Tips for this stage",
+      tips: [
+        [
+          "Start taking folic acid and iron tablets from the health center.",
+          "Eat small, frequent meals if you feel nausea.",
+          "Avoid alcohol, tobacco, and unprescribed medicines.",
+          "Go to your first antenatal (ANC) visit as early as possible."
+        ],
+        [
+          "You should start to feel the baby move — tell your midwife if you don't.",
+          "Sleep under a mosquito net to prevent malaria and dengue.",
+          "Keep attending your ANC visits and take your iron tablets.",
+          "Eat protein-rich foods: eggs, fish, beans, and green vegetables."
+        ],
+        [
+          "Count baby movements daily — fewer movements is a danger sign.",
+          "Plan your birth: decide the facility and transport in advance.",
+          "Watch for danger signs: bleeding, severe headache, swelling of face or hands.",
+          "Prepare clean clothes and documents for the birth."
+        ]
+      ],
+      ancTitle: "Antenatal Care (ANC) Visits",
+      ancSubtitle: "WHO recommends 8 contacts during pregnancy",
+      contact: "Contact",
+      weekLabel: "Week",
+      done: "Done",
+      next: "Next visit",
+      upcoming: "Upcoming",
+      notPregnant: "No active pregnancy",
+      notPregnantDesc: "Update your family profile if you are pregnant to activate the tracker.",
+      updateProfile: "Update Profile"
+    },
+    vaccines: {
+      title: "Vaccination Schedule",
+      subtitle: "Timor-Leste national immunization program (EPI)",
+      selectChild: "Select a child",
+      statusOverdue: "Overdue",
+      statusDue: "Due now",
+      statusUpcoming: "Upcoming",
+      statusGiven: "Given",
+      dueAt: "Scheduled at",
+      atBirth: "At birth",
+      weeks: "weeks",
+      months: "months",
+      markGiven: "Mark as given",
+      unmark: "Undo",
+      noChildren: "No children in your family profile yet.",
+      addChildHint: "Add a child in your family profile to see their vaccine schedule.",
+      goToProfile: "Open Family Profile"
+    },
+    facilities: {
+      title: "Find a Health Facility",
+      subtitle: "Hospitals, health centers, and health posts in Timor-Leste",
+      filterLabel: "Municipality",
+      all: "All municipalities",
+      callBtn: "Call",
+      types: {
+        "Hospital": "Hospital",
+        "CHC": "Community Health Center",
+        "Health Post": "Health Post",
+        "Clinic": "Clinic"
+      }
+    },
+    doctorTalk: {
+      title: "Talk to a Doctor",
+      subtitle: "Chat or call a health professional",
+      online: "Online",
+      chatBtn: "Start Chat",
+      callBtn: "Start Call",
+      inputPlaceholder: "Type your message...",
+      calling: "Calling...",
+      inCall: "In call",
+      mute: "Mute",
+      muted: "Muted",
+      speaker: "Speaker",
+      endCall: "End Call",
+      callEnded: "Call ended",
+      duration: "Duration",
+      back: "← Back",
+      demoBadge: "Demo simulation",
+      cannedReplies: [
+        "Hello! I'm Dr. Sarah. I can see the AI analysis you shared. How is the patient feeling right now?",
+        "Thank you. Based on what you describe, please keep the patient hydrated and monitor the temperature every few hours.",
+        "If you notice any danger signs — trouble breathing, convulsions, or the condition getting worse — go to the nearest health facility immediately.",
+        "You're doing the right thing by checking early. Do you have any other questions for me?"
+      ]
+    },
+    paywall: {
+      title: "MédLab Premium",
+      subtitle: "Direct access to doctors and midwives, whenever you need them.",
+      freeName: "Free",
+      freeFeatures: ["AI symptom checks", "Pregnancy tracker", "Vaccination schedule", "Facility directory"],
+      premiumName: "Premium",
+      premiumFeatures: ["Everything in Free", "Unlimited chat with doctors", "Voice calls with specialists", "Priority emergency guidance"],
+      perMonth: "/ month",
+      price: "$2.99",
+      free: "$0",
+      subscribeBtn: "Subscribe Now",
+      activeBadge: "Premium Active",
+      maybeLater: "Maybe later",
+      note: "Demo mode: no payment is processed. Payment options for Timor-Leste are on our roadmap."
     },
     about: {
       back: "Back",
-      title: "About MurakMed-",
-      bio1: "MurakMed-AI is an intelligent health assistant designed to bridge the gap between patients and medical understanding. Powered by advanced Artificial Intelligence, it helps users decipher complex symptoms and provides instant, easy-to-understand health insights.",
-      bio2: "Our mission is to make preliminary health assessment accessible to everyone, ensuring that language and location are never barriers to understanding your own health.",
-      whyTitle: "Why you should use MurakMed-AI",
+      title: "About Médiku Labarik ",
+      bio1: "Médiku Labarik (MédLab) is an intelligent maternal and child health assistant built for Timor-Leste. Powered by Artificial Intelligence, it helps mothers and caregivers understand symptoms in children and during pregnancy, and connects them with the right care.",
+      bio2: "Our mission is to reduce preventable child and maternal illness by putting trusted, easy-to-understand health guidance — in Tetum, English, and Indonesian — into every family's hands.",
+      whyTitle: "Why use MédLab",
       features: [
-        { title: "Advanced AI Analysis", desc: "Utilizes state-of-the-art Gemini models to analyze symptoms with high precision and provide context-aware medical suggestions." },
-        { title: "Instant Results", desc: "No waiting rooms. Get a preliminary analysis of your condition in seconds, available 24/7 whenever you need it." },
-        { title: "Comprehensive Care", desc: "Goes beyond just naming a disease. We provide recommended actions, potential medications, and lifestyle advice." },
-        { title: "Privacy Focused", desc: "Your health journey is private. We process your symptoms anonymously and prioritize your data security." }
+        { title: "Built for Mothers & Children", desc: "Age-aware analysis for children and gestation-aware analysis for pregnancy — not generic adult advice." },
+        { title: "Instant, 24/7", desc: "No waiting rooms. Get preliminary guidance in seconds, day or night, in your language." },
+        { title: "From Advice to Action", desc: "Danger-sign alerts, care provider matching, vaccination reminders, and a direct line to doctors." },
+        { title: "Privacy First", desc: "Your family profile stays on your device. We prioritize your data security." }
       ]
     },
     faq: {
       title: "Frequently Asked Questions",
       items: [
         {
-          q: "Is MurakMed AI a replacement for a real doctor?",
-          a: "No. MurakMed AI is an informational tool designed to help you understand potential causes of your symptoms. It cannot provide an official medical diagnosis. Always consult a qualified healthcare professional for medical decisions."
+          q: "Is Médiku Labarik a replacement for a real doctor?",
+          a: "No. MédLab is an informational tool to help you understand possible causes of symptoms in your child or during pregnancy. It cannot provide an official medical diagnosis. Always consult a qualified health professional for medical decisions."
         },
         {
-          q: "How does the AI analyze my symptoms?",
-          a: "The app uses Google's advanced Gemini AI models. It compares the symptoms you describe (text or image) against a vast database of medical knowledge to identify patterns and suggest probable conditions."
-        },
-        {
-          q: "Is my personal data safe?",
-          a: "Yes. We prioritize privacy. While we record visit data to help improve healthcare tracking, we do not share your personal identifiable information with third-party advertisers."
+          q: "How does the AI analyze the symptoms?",
+          a: "The app uses an AI medical model. It compares the symptoms you describe (text or photo) with medical knowledge — including child danger signs and pregnancy danger signs — to suggest probable conditions and next steps."
         },
         {
           q: "What should I do if the app shows a red Emergency alert?",
-          a: "If you see a red Emergency alert, ignore the other details and seek immediate medical help at the nearest hospital or call emergency services right away."
+          a: "If you see a red Emergency alert, do not wait. Go immediately to the nearest health facility or hospital, or use the 'Talk to a Doctor' feature for urgent guidance."
         },
         {
-          q: "Why are some specialist recommendations in English?",
-          a: "To ensure accuracy when matching with our database of local doctors, specific medical titles (like 'Cardiologist') are kept in English, even if the rest of the app is in Tetum or Indonesian."
+          q: "Is my family's data safe?",
+          a: "Yes. Your family profile and health checks are stored only on your own device. We do not share your personal information."
+        },
+        {
+          q: "Why are some care provider names in English?",
+          a: "To match correctly with our directory of local providers, professional titles (like 'Pediatrician') are kept in English, even when the rest of the app is in Tetum or Indonesian."
         }
       ]
     },
     footer: {
-      safety: "MurakMed AI provides informational suggestions only. For best results, seek advice from your doctor or qualified health professional.",
-      copyright: "All Rights Reserved."
+      safety: "Médiku Labarik provides informational suggestions only. For medical decisions, always consult your doctor, midwife, or nearest health facility."
     },
-    error: "There was a problem during analysis. Please try again."
+    error: "There was a problem during analysis. Please make sure the AI service is running and try again."
   },
+
   tet: {
     hero: {
-      title: "Identifika Sintomas.",
-      subtitle: "Ajuda ita lalais.",
-      desc: "Apoia husi Inteligénsia Artifisial avansadu atu facilita kompriensaun kona-ba saida mak ita sente no orienta medida ne’ebé mak di’ak liu atu halo."
+      title: "Kuidadu ba ita-nia oan.",
+      subtitle: "Kuidadu ba ita-nia isin-rua.",
+      desc: "Médiku Labarik uza Inteligénsia Artifisial atu ajuda inan no kuidadór sira iha Timor-Leste komprende sintoma iha labarik no durante isin-rua — no orienta ita ba kuidadu ne'ebé loos."
     },
     header: {
-      howItWorks: "Oinsá Servisu",
+      aboutMenuTitle: "Kona-ba MédLab",
+      aboutMenuSubtitle: "Saida mak & tansá uza?",
+      howItWorks: "Pájina Prinsipál",
+      howItWorksSubtitle: "Fila ba ita-nia dashboard",
       faq: "Perguntas (FAQ)",
-      emergency: "Emerjénsia",
-      system: "Sistema Operasional",
-      aboutMenuTitle: "Kona-ba MurakMed-AI",
-      aboutMenuSubtitle: "Saida Mak & Tansa Uza?",
-      doctorPortal: "Portal Doutór",
-      patientMode: "Troka ba Modu Pasiente"
+      faqSubtitle: "Perguntas baibain",
+      editProfile: "Perfil Família",
+      editProfileSubtitle: "Edita inan no oan sira",
+      language: "Lian"
     },
-    doctor: {
-      dashboard: "Dashboard Espesialista",
-      welcome: "Benvinda, Dr.",
-      upcoming: "Ajendamentu Tuirmai",
-      availability: "Ha'u-nia Disponibilidade",
-      noAppointments: "Laiha ajendamentu foun.",
-      patient: "Pasiente",
-      symptoms: "Sintoma",
-      time: "Oras",
-      status: "Status",
-      manageSlots: "Jere Oras",
-      updateStatus: "Atualiza Status",
-      currentStatus: "Status Agora",
-      available: "Disponivel Ohin",
-      unavailable: "La Disponivel",
-      tomorrow: "Disponivel Aban",
-      busy: "Ocupadu/Prizu",
-      saveStatus: "Rai Status",
-      viewRecord: "Haree Rejista Médiku",
-      notified: "Ita sei hetan notifikasaun ba ajendamentu foun."
-    },
-    auscultation: {
-      title: "Teste Auskultasaun Espesialista",
-      subtitle: "Ezame fíziku profesional no análize lian isin nian",
-      heart: "Lian Fuan",
-      lung: "Lian Pulmaun",
-      bowel: "Lian Kabun",
-      findings: "Konkluzaun Kliniku",
-      performBtn: "Hala'o Teste Auskultasaun",
-      saveBtn: "Rai Rezultadu Ezame",
-      heartPlaceholder: "Deskreve ritmu no lian fuan (ez: S1, S2 rona, laiha sopru)",
-      lungPlaceholder: "Deskreve lian dada iis (ez: moos iha sorin rua, laiha sibeiru)",
-      bowelPlaceholder: "Deskreve lian husi kabun laran (ez: normoativu)",
-      findingsPlaceholder: "Rezumu husi konkluzaun ezame fíziku",
-      success: "Rezultadu auskultasaun rejista ho susesu.",
-      viewResults: "Haree Rezultadu Ezame"
-    },
-    scheduler: {
-      title: "Ajenda Konsulta",
-      selectDate: "Hili Loron",
-      selectTime: "Hili Oras",
-      confirm: "Konfirma Rezerva",
-      morning: "Dadeer",
-      afternoon: "Lokraik",
-      evening: "Kalan",
-      selected: "Hili Ona",
-      success: "Ajendamentu Rai Ona ho Susesu!",
-      backToResults: "← Fila ba Rezultadu",
-      pendingChoice: "Seidauk Hili",
-      bookNow: "Ajenda Konsulta",
-      reminders: {
-        title: "Lembransa (Reminders)",
-        enable: "Halo lembransa ba ajendamentu ida ne'e",
-        method: "Metodu Lembransa",
-        email: "Notifikasaun E-mail",
-        app: "Notifikasaun iha App",
-        timing: "Horibainhira atu fo lembransa?",
-        opt1: "Oras 1 molok",
-        opt2: "Oras 12 molok",
-        opt3: "Loron 1 molok"
-      }
-    },
-    dashboard: {
-      welcomeSub: "Benvinda ba Futuru Saude nian",
+    home: {
+      welcomeSub: "Akompañante Saúde Inan no Oan",
       hello: "Olá",
-      heroDesc: "MurakMed-AI la'ós de'it análize sintoma ida. Ne'e mak ita-nia akompañante saude intelijente, hodi liga entre kompleksidade no kuidadu.",
-      actions: {
-        newAnalysis: "Análize Foun",
-        newAnalysisDesc: "Análize ita-nia sintoma ho AI",
-        history: "Istóriku Médiku",
-        historyDesc: "Haree fali ita-nia rezultadu pasadu",
-        profile: "Konfigurasaun Perfil",
-        profileDesc: "Jere ita-nia identidade"
-      },
-      insights: {
-        title: "Podér husi MurakMed-AI",
-        subtitle: "Uza modelu AI avansadu liu iha mundu atu fornese informasaun saude lokalizadu ba Timor-Leste.",
-        item1Title: "Intelijénsia Imediatu",
-        item1Desc: "Segundu de'it atu analiza, minutu de'it atu foti asaun. Ami hasai tiha tempu hein.",
-        item2Title: "Orientasaun Verifikadu",
-        item2Desc: "Mapeamentu kondisaun-espesialista atu garante ita hasoru doutór ne'ebé loos.",
-        item3Title: "Teknolojia ho Empatia",
-        item3Desc: "Imajinadu ba ema, ho lian simples no kuidadu.",
+      heroDesc: "Asistente saúde ba ita-nia família: analiza sintoma, akompaña isin-rua, kumpri orariu vasina, no kontaktu doutór bainhira presiza.",
+      cards: {
+        checker: "Analiza Sintoma",
+        checkerDesc: "Análize AI ba ita-nia oan ka isin-rua",
+        tracker: "Akompaña Isin-rua",
+        trackerDesc: "Akompaña ita-nia isin-rua semana ba semana",
+        vaccines: "Vasina",
+        vaccinesDesc: "Kumpri orariu vasina ba ita-nia oan sira",
+        doctor: "Ko'alia ho Doutór",
+        doctorDesc: "Chat ka liga ba profisionál saúde",
+        facilities: "Buka Fasilidade",
+        facilitiesDesc: "Ospitál no sentru saúde besik ita"
       }
     },
-    auth: {
-      login: {
-        title: "Benvinda Fila Fali",
-        subtitle: "Tama ba ita-nia konta MurakMed",
-        username: "Uza-na'in",
-        password: "Kontrasenia",
-        forgot: "Haluha?",
-        signIn: "Tama",
-        noAccount: "Seidauk iha konta?",
-        createAccount: "Rejista Konta",
-        recent: "Uza foin lalais iha dispozitivu ne'e",
-        error: "Kredensia la loos. Koko 'Sarah Silva' / 'doctor123'",
-        cancel: "Kansela",
-        doctorLogin: "Login Doutór/Espesialista"
-      },
-      signup: {
-        title: "Rejista Konta",
-        subtitle: "Partisipa iha MurakMed AI atu akompaña ita-nia saúde",
-        firstName: "Naran Primeiru",
-        lastName: "Naran Apelidu",
-        email: "E-mail",
-        username: "Uza-na'in",
-        password: "Kontrasenia",
-        dob: "Data Moris",
-        sex: "Seksu",
-        uploadPhoto: "Upload Foto Perfil",
-        complete: "Kompleta Rejista",
-        haveAccount: "Iha tiha ona konta?",
-        signIn: "Tama",
-        error: "Falla atu rejista. Favor koko fali.",
-        cancel: "Kansela"
-      },
-      reset: {
-        title: "Troka Kontrasenia",
-        subtitle: "Verifika identidade atu asegura ita-nia konta",
-        findAccount: "Buka Konta",
-        backToLogin: "Buka Konta",
-        hello: "Olá",
-        newPass: "Kontrasenia Foun",
-        confirmPass: "Konfirma Kontrasenia",
-        mismatch: "Kontrasenia la hanesan.",
-        length: "Kontrasenia tenke iha karakter 5 ba leten.",
-        successTitle: "Kontrasenia Troka Ona!",
-        successDesc: "Ita-nia konta agora seguru ona. Redireksiona ba pajina tama...",
-        goNow: "Bá Agora",
-        notYourAccount: "La'ós ita-nia konta?"
-      },
-      profile: {
-        title: "Konfigurasaun Konta",
-        subtitle: "Jere ita-nia perfil médiku no seguransa",
-        save: "Rai Mudansa Perfil",
-        success: "Perfil atualiza ona ho susesu!",
-        back: "Fila"
-      }
+    onboarding: {
+      title: "Benvinda ba Médiku Labarik",
+      subtitle: "Konta ami kona-ba ita-nia família atu ami bele personaliza kuidadu. Dadus hotu rai de'it iha dispozitivu ida ne'e.",
+      editTitle: "Perfil Família",
+      momSection: "Kona-ba inan",
+      momName: "Naran inan nian",
+      momDob: "Data moris (opsionál)",
+      pregnantQ: "Ita isin-rua hela ka lae?",
+      yes: "Sin",
+      no: "Lae",
+      lmp: "Loron primeiru husi menstruasaun ikus",
+      lmpHelp: "Ami uza ida ne'e atu kalkula semana isin-rua no data partu.",
+      childrenSection: "Ita-nia oan sira",
+      addChild: "Aumenta oan ida",
+      childName: "Naran oan nian",
+      childDob: "Data moris",
+      childSex: "Seksu",
+      boy: "Mane",
+      girl: "Feto",
+      remove: "Hasai",
+      noChildrenHint: "Ita bele aumenta oan sira agora ka ikus mai.",
+      save: "Rai & Kontinua",
+      nameRequired: "Favor hakerek naran inan nian."
     },
-    history: {
-      title: "Istóriku Médiku",
-      noRecords: "Seidauk iha rejista istóriku médiku.",
-      startNew: "Komesa análize sintoma foun atu kria rejista ida.",
-      visits: "Vizita",
-      lastUpdate: "Atualiza ikus",
-      snapshot: "Rezumu Sintoma:",
-      reference: "ID Referénsia",
-      reportTitle: "Relatóriu Médiku",
-      verifiedPatient: "Pasiente Verifikadu",
-      symptoms: "Sintoma ne'ebé Relata",
-      notes: "Nota Doutór / Rezumu",
-      noNotes: "Laiha nota adisional ba vizita isu ne'e.",
-      primaryDiagnosis: "Diagnoza Prinsipal",
-      specialist: "Espesialista Rekomendada",
-      archive: "Arkivu Análize Kompletu",
-      notAvailable: "Dadus análize AI ladun kompletu ba rejista iha ne'e.",
-      pendingSpecialist: "Seidauk Hili Espesialista"
-    },
-    certificate: {
-      title: "SERTIFIKADU MÉDIKU",
-      subTitle: "Avaliasaun Saude Inteligénsia Artifisial",
-      certId: "ID Sertifikadu",
-      issuedDate: "Data Emisaun",
-      patientInfo: "Informasaun Pasiente",
-      clinicalFindings: "Rezultadu Kliniku & Análize AI",
-      primaryDiagnosis: "Kondisaun Sujeridu Prinsipal",
-      probability: "Posibilidade",
-      reportedSymptoms: "Sintoma ne'ebé Relata",
-      recommendations: "Rekomendasaun",
-      advice: "Konsellu Saude Jerál",
-      disclaimer: "AVISU: Sertifikadu ida ne'e jere husi AI ba kestaun informativu de'it. Ne'e la substitui ezame fíziku husi profesional saúde ne'ebé rejistadu. Favor konsulta doutór ba diagnoza definitivu.",
-      verified: "VERIFIKADU AI",
-      downloadBtn: "Download Sertifikadu (PDF)",
-      notAvailable: "Sertifikadu disponivel hafoin hasoru doutor."
+    selector: {
+      title: "Sé mak presiza ajuda ohin?",
+      subtitle: "Hili sé mak ita hakarak analiza sintoma ba.",
+      mother: "Inan",
+      pregnantBadge: "Isin-rua",
+      week: "Semana",
+      months: "fulan",
+      years: "tinan",
+      notPregnantNote: "Análize isin-rua disponivel bainhira perfil hatete katak ita isin-rua."
     },
     input: {
-      title: "Informasaun Pasiente & Sintoma",
-      desc: "Fornese informasaun lolos no ka'an hodi hetan diagnoza ne'ebe akuradu.",
-      name: "Naran Kompletu",
-      dob: "Data Moris",
+      title: "Deskreve Sintoma",
+      desc: "Fornese detallu klaru atu hetan orientasaun ne'ebé akuradu.",
+      forPatient: "Analiza ba",
       age: "Idade",
-      sex: "Seksu",
-      sexOptions: {
-        select: "Hili (Opsional)...",
-        male: "Mane",
-        female: "Feto",
-        other: "Seluk"
-      },
-      address: "Hela Fatin",
-      addressPlaceholder: "Estrada, Sidade (Opsional)",
-      onset: "Moras komesa horibainhira?",
-      onsetPlaceholder: "ez. loron 2 liuba (Opsional)",
-      symptomsLabel: "Deskreve Sintomas",
-      symptomsPlaceholder: "Deskreve saida mak pasiente sente, ka upload imajen kondisaun nian...",
-      imagePlaceholder: "Aumenta testu opsional atu deskreve imajen...",
+      weight: "Todan (kg, opsionál)",
+      weightPlaceholder: "ez., 12",
+      gestationalAge: "Semana isin-rua",
+      onset: "Komesa horibainhira?",
+      onsetPlaceholder: "ez. loron 2 liuba (Opsionál)",
+      symptomsLabel: "Deskreve Sintoma",
+      symptomsPlaceholder: "Deskreve saida mak akontese, ka upload foto ida...",
+      imagePlaceholder: "Aumenta testu opsionál atu deskreve imajen...",
       quickAdd: "Aumenta Lalais:",
       uploadBtn: "Aumenta Foto",
       changePhoto: "Troka Foto",
-      analyzeBtn: "Grava & Analiza",
+      analyzeBtn: "Analiza",
       analyzing: "Analiza hela...",
-      fileError: "File boot liu. Favor upload imajen menus husi 5MB."
+      fileError: "File boot liu. Favor upload imajen menus husi 5MB.",
+      back: "← Fila"
     },
-    commonSymptoms: ["Ulun Moras", "Isin Manas", "Mear", "Muta", "Kole", "Kakorok Moras", "Isin Katar", "Oin Halai"],
+    childSymptoms: ["Isin manas", "Mear", "Kabun-been", "Muta", "Lakohi han", "Isin sae", "Dada iis lalais", "Tanis barak"],
+    pregnancySymptoms: ["Muta-muta", "Ulun moras", "Isin bubu", "Raan sai", "Kabun moras", "Oin halai", "Bebé book uitoan", "Kotuk moras"],
     results: {
       title: "Rezultadu Análize",
-      recordSaved: "Rezultadu Rai Ona",
-      recordFailed: "Falla atu Rai Rekord",
-      newRecord: "Rejista Foun",
-      emergencyTitle: "Emerjénsia Médika Potensial",
-      emergencyDefault: "Ita-nia sintoma indika kondisaun sériu. Favor buka atendimentu médiku imediatu ka liga ba servisu emerjénsia.",
-      seekEmergency: "Buka Servisu Emerjénsia",
-      conditionsTitle: "Kondisaun Potensial",
+      newRecord: "Análize Foun",
+      translating: "Tradús hela ba",
+      emergencyTitle: "Emerjénsia Médika Potensiál",
+      emergencyDefault: "Sintoma sira ne'e bele indika kondisaun sériu. Favor bá kedas fasilidade saúde besik liu.",
+      seekEmergency: "Liga ba Doutór Agora",
+      conditionsTitle: "Kondisaun Potensiál",
       recommendedAction: "Asaun Rekomendada",
       whyThis: "Tansá ida ne'e hanesan:",
       medications: "Medikamentu & Tratamentu Sujeridu",
       dosage: "Doze:",
       nextStep: "PASU TUIRMAI",
-      disclaimer: "MurakMed AI fornese informasaun de'it. Ne'e la substitui konsellu médiku profisional, diagnoz, ka tratamentu.",
-      specialistsTitle: "Espesialista Rekomendada",
-      callDoctor: "Liga Doutor",
-      noSpecialist: "La hetan espesialista espesifiku. Favor konsulta ho Doutor Jeral.",
-      selectSpecialist: "Hili espesialista ne'ebé ita prefere",
+      disclaimer: "Médiku Labarik fornese informasaun de'it. Ne'e la substitui konsellu médiku profisionál, diagnoza, ka tratamentu.",
+      selectSpecialist: "Hili fornesedor kuidadu ida",
       specialistChosen: "Hili ona",
-      filterLabel: "Hili tuir disponibilidade:",
+      choose: "Hili",
+      noSpecialist: "La hetan espesialista espesífiku. Favor konsulta ho Médiku Jerál.",
+      filterLabel: "Filtra tuir disponibilidade:",
       filterAll: "Hotu-hotu",
       filterToday: "Disponivel Ohin",
       filterTomorrow: "Aban",
-      filterLater: "Seluk fali"
+      filterLater: "Ikus mai",
+      talkToDoctor: "Ko'alia ho Doutór Ne'e"
     },
     specialistNames: {
       "General Practitioner": "Médiku Jerál",
-      "Cardiologist": "Kardiologista",
-      "Dermatologist": "Dermatologista",
-      "Neurologist": "Neurolofista",
       "Pediatrician": "Pediatra",
-      "ENT Specialist": "Espesialista ENT",
-      "Internal Medicine": "Medisina Interna",
-      "Ophthalmologist": "Oftalmologista",
-      "Orthopedic Surgeon": "Sirurjiaun Ortopédiku",
       "Obstetrician-Gynecologist": "Obstetra-Jinekolojista",
-      "Dentist": "Dentista",
-      "Psychiatra": "Psikiatra"
+      "Midwife": "Parteira"
+    },
+    tracker: {
+      title: "Akompaña Isin-rua",
+      subtitle: "Akompaña ita-nia viajen semana ba semana",
+      week: "Semana",
+      of40: "husi 40",
+      trimester: "Trimestre",
+      trimesterNames: ["Trimestre primeiru", "Trimestre segundu", "Trimestre terseiru"],
+      dueDate: "Data partu estimada",
+      daysToGo: "loron tan",
+      overdueNote: "Liu tiha ona data partu estimada — favor hasoru ita-nia parteira.",
+      tipsTitle: "Konsellu ba faze ida ne'e",
+      tips: [
+        [
+          "Komesa hemu ai-moruk ásidu fóliku no ferru husi sentru saúde.",
+          "Han ki'ik maibé dala barak se ita sente muta-muta.",
+          "Evita tua, tabaku, no ai-moruk laiha reseita.",
+          "Bá vizita ANC (konsulta isin-rua) primeiru sedu bele."
+        ],
+        [
+          "Ita tenke komesa sente bebé book — hatete ba parteira se lae.",
+          "Toba iha muskiteiru laran atu prevene malária no dengue.",
+          "Kontinua bá vizita ANC no hemu ai-moruk ferru.",
+          "Han hahán ho proteína: tolun, ikan, fore, no modo matak."
+        ],
+        [
+          "Sura bebé nia movimentu loron-loron — movimentu uitoan mak sinál perigu.",
+          "Planeia ita-nia partu: deside fatin no transporte molok tempu to'o.",
+          "Atensaun ba sinál perigu: raan sai, ulun moras makaas, isin bubu iha oin ka liman.",
+          "Prepara roupa moos no dokumentu ba partu."
+        ]
+      ],
+      ancTitle: "Vizita Kuidadu Antenatál (ANC)",
+      ancSubtitle: "OMS rekomenda kontaktu 8 durante isin-rua",
+      contact: "Kontaktu",
+      weekLabel: "Semana",
+      done: "Halo tiha ona",
+      next: "Vizita tuirmai",
+      upcoming: "Sei mai",
+      notPregnant: "Laiha isin-rua ativu",
+      notPregnantDesc: "Atualiza ita-nia perfil família se ita isin-rua atu ativa akompañamentu.",
+      updateProfile: "Atualiza Perfil"
+    },
+    vaccines: {
+      title: "Orariu Vasina",
+      subtitle: "Programa imunizasaun nasionál Timor-Leste (EPI)",
+      selectChild: "Hili oan ida",
+      statusOverdue: "Tarde ona",
+      statusDue: "Tempu agora",
+      statusUpcoming: "Sei mai",
+      statusGiven: "Simu ona",
+      dueAt: "Ajendadu iha",
+      atBirth: "Bainhira moris",
+      weeks: "semana",
+      months: "fulan",
+      markGiven: "Marka simu ona",
+      unmark: "Hasai marka",
+      noChildren: "Seidauk iha oan iha ita-nia perfil família.",
+      addChildHint: "Aumenta oan ida iha perfil família atu haree sira-nia orariu vasina.",
+      goToProfile: "Loke Perfil Família"
+    },
+    facilities: {
+      title: "Buka Fasilidade Saúde",
+      subtitle: "Ospitál, sentru saúde, no postu saúde iha Timor-Leste",
+      filterLabel: "Munisípiu",
+      all: "Munisípiu hotu-hotu",
+      callBtn: "Liga",
+      types: {
+        "Hospital": "Ospitál",
+        "CHC": "Sentru Saúde Komunitária",
+        "Health Post": "Postu Saúde",
+        "Clinic": "Klínika"
+      }
+    },
+    doctorTalk: {
+      title: "Ko'alia ho Doutór",
+      subtitle: "Chat ka liga ba profisionál saúde",
+      online: "Online",
+      chatBtn: "Komesa Chat",
+      callBtn: "Komesa Ligasaun",
+      inputPlaceholder: "Hakerek ita-nia mensajen...",
+      calling: "Liga hela...",
+      inCall: "Iha ligasaun",
+      mute: "Hamate lian",
+      muted: "Lian mate",
+      speaker: "Altifalante",
+      endCall: "Remata Ligasaun",
+      callEnded: "Ligasaun remata",
+      duration: "Durasaun",
+      back: "← Fila",
+      demoBadge: "Simulasaun demo",
+      cannedReplies: [
+        "Olá! Ha'u Dr. Sarah. Ha'u haree tiha análize AI ne'ebé ita fahe. Pasiente sente oinsá agora?",
+        "Obrigada. Bazeia ba saida mak ita deskreve, favor fó bee barak ba pasiente no monitoriza isin manas kada oras balu.",
+        "Se ita haree sinál perigu ruma — susar dada iis, konvulsaun, ka kondisaun sai aat liu — bá kedas fasilidade saúde besik liu.",
+        "Ita halo buat ne'ebé loos hodi analiza sedu. Ita iha pergunta seluk ba ha'u?"
+      ]
+    },
+    paywall: {
+      title: "MédLab Premium",
+      subtitle: "Asesu diretu ba doutór no parteira sira, bainhira de'it ita presiza.",
+      freeName: "Grátis",
+      freeFeatures: ["Análize sintoma AI", "Akompaña isin-rua", "Orariu vasina", "Diretóriu fasilidade"],
+      premiumName: "Premium",
+      premiumFeatures: ["Buat hotu iha Grátis", "Chat ilimitadu ho doutór", "Ligasaun lian ho espesialista", "Orientasaun emerjénsia prioridade"],
+      perMonth: "/ fulan",
+      price: "$2.99",
+      free: "$0",
+      subscribeBtn: "Subskreve Agora",
+      activeBadge: "Premium Ativu",
+      maybeLater: "Ikus mai karik",
+      note: "Modu demo: laiha pagamentu prosesa. Opsaun pagamentu ba Timor-Leste iha ami-nia planu."
     },
     about: {
       back: "Fila",
-      title: "Kona-ba MurakMed-",
-      bio1: "MurakMed-AI mak asistente saude intelijente ne'ebé dezenvolve atu sai ponte entre pasiente no kompriensaun médiku. Uza Inteligénsia Artifisial avansadu, ajuda uza-na'in komprende sintoma komplikadu no fornese informasaun saude ne'ebé fasil komprende.",
-      bio2: "Ami-nia misaun mak atu halo avaliasaun saude preliminariu asesivel ba ema hotu, garante katak lian no lokasaun la sai obstákulu atu komprende ita-nia saude rasik.",
-      whyTitle: "Tansa Uza MurakMed-AI",
+      title: "Kona-ba Médiku Labarik ",
+      bio1: "Médiku Labarik (MédLab) mak asistente saúde inteligente ba inan no oan, harii ba Timor-Leste. Ho Inteligénsia Artifisial, nia ajuda inan no kuidadór sira komprende sintoma iha labarik no durante isin-rua, no liga sira ho kuidadu ne'ebé loos.",
+      bio2: "Ami-nia misaun mak atu hamenus moras labarik no inan ne'ebé bele prevene, hodi tau orientasaun saúde ne'ebé fiar no fásil komprende — iha Tetun, Inglés, no Indonézia — iha família hotu-hotu nia liman.",
+      whyTitle: "Tansá uza MédLab",
       features: [
-        { title: "Análize AI Avansadu", desc: "Uza modelu Gemini foun liu atu analiza sintoma ho presizaun aas no fornese sujestaun médiku ne'ebé relevante." },
-        { title: "Rezultadu Imediatu", desc: "La presiza hein. Hetan análize preliminariu kona-ba ita-nia kondisaun iha segundu laran, disponivel 24/7 bainhira de'it ita presiza." },
-        { title: "Kuidadu Abranjente", desc: "La'ós de'it identifika moras. Ami fornese asaun rekomendada, medikamentu potensial, no konsellu estilu moris." },
-        { title: "Privasidade Prioridade", desc: "Ita-nia jornada saude privadu. Ami prozesa ita-nia sintoma ho anónimu no prioriza seguransa dadus." }
+        { title: "Harii ba Inan no Oan", desc: "Análize tuir idade ba labarik no tuir semana isin-rua ba inan — la'ós konsellu jerál ba ema boot." },
+        { title: "Imediatu, 24/7", desc: "La presiza hein. Hetan orientasaun preliminár iha segundu laran, loron ka kalan, iha ita-nia lian." },
+        { title: "Husi Konsellu ba Asaun", desc: "Alerta sinál perigu, rekomendasaun fornesedor kuidadu, lembransa vasina, no liña diretu ba doutór." },
+        { title: "Privasidade Uluk", desc: "Ita-nia perfil família rai de'it iha ita-nia dispozitivu. Ami prioriza seguransa dadus." }
       ]
     },
     faq: {
       title: "Perguntas Baibain (FAQ)",
       items: [
         {
-          q: "MurakMed AI troka fali Doutor sira ka lae?",
-          a: "Lae. MurakMed AI mak ferramenta informasaun nian de'it atu ajuda komprende kauza husi ita-nia sintoma. Nia labele fo diagnoza ofisial. Favor konsulta nafatin ho profesional saude."
+          q: "Médiku Labarik troka fali doutór sira ka lae?",
+          a: "Lae. MédLab mak ferramenta informasaun nian atu ajuda komprende kauza posivel husi sintoma iha ita-nia oan ka durante isin-rua. Nia labele fó diagnoza ofisiál. Konsulta nafatin ho profisionál saúde kualifikadu ba desizaun médika."
         },
         {
-          q: "Oinsá AI analiza ha'u-nia sintoma?",
-          a: "Aplikasaun ne'e uza modelu Google Gemini AI. Nia kompara sintoma ne'ebé ita hakerek (testu ka imajen) ho database mediku boot atu identifika padraun no sujere kondisaun provavel."
-        },
-        {
-          q: "Ha'u-nia dadus privadu seguru ka lae?",
-          a: "Sin. Ami tau importansia ba privasidade. Maske ami rai dadus vizita nian atu hadia servisu, ami la fahe informasaun pessoal ba ema seluk."
+          q: "Oinsá AI analiza sintoma sira?",
+          a: "Aplikasaun ne'e uza modelu AI médiku. Nia kompara sintoma ne'ebé ita deskreve (testu ka foto) ho koñesimentu médiku — inklui sinál perigu labarik nian no isin-rua nian — atu sujere kondisaun provavel no pasu tuirmai."
         },
         {
           q: "Saida mak ha'u tenke halo se aplikasaun hatudu avizu Emerjénsia mean?",
-          a: "Se ita haree avizu Emerjénsia mean, ignora detalhe seluk no buka kedas ajuda médiku iha ospital besik ka liga ba servisu emerjénsia."
+          a: "Se ita haree avizu Emerjénsia mean, keta hein. Bá kedas fasilidade saúde ka ospitál besik liu, ka uza funsaun 'Ko'alia ho Doutór' ba orientasaun urjente."
         },
         {
-          q: "Tansá rekomendasaun espesialista balu uza lian Inglés?",
-          a: "Atu garante katak ami rekomenda doutor ne'ebé los husi ami-nia database, titulu médiku (hanesan 'Cardiologist') mantem iha Inglés, maske aplikasaun uza lian Tetum."
+          q: "Ha'u-nia família nia dadus seguru ka lae?",
+          a: "Sin. Ita-nia perfil família no análize saúde rai de'it iha ita-nia dispozitivu rasik. Ami la fahe ita-nia informasaun pesoál."
+        },
+        {
+          q: "Tansá naran fornesedor kuidadu balu iha lian Inglés?",
+          a: "Atu tuir loloos ho ami-nia diretóriu fornesedor lokál, títulu profisionál (hanesan 'Pediatrician') mantein iha Inglés, maske parte seluk husi aplikasaun iha Tetun ka Indonézia."
         }
       ]
     },
     footer: {
-      safety: "MurakMed AI fornese sujestaun informativu de'it. Atu diak liu, buka konsellu husi ita-nia doutór, profesional saude ne'ebe kualifikadu.",
-      copyright: "Direitu hotu rezervadu."
+      safety: "Médiku Labarik fornese sujestaun informativu de'it. Ba desizaun médika, konsulta nafatin ita-nia doutór, parteira, ka fasilidade saúde besik liu."
     },
-    error: "Iha problema durante análize dadus. Favor koko fali."
+    error: "Iha problema durante análize. Favor verifika katak servisu AI la'o hela no koko fali."
   },
+
   id: {
     hero: {
-      title: "Identifikasi Gejala.",
-      subtitle: "Dapatkan bantuan cepat.",
-      desc: "Didukung oleh Kecerdasan Buatan canggih untuk membantu Anda memahami gejala dan memandu Anda ke tindakan terbaik."
+      title: "Rawat anak Anda.",
+      subtitle: "Rawat kehamilan Anda.",
+      desc: "Médiku Labarik menggunakan Kecerdasan Buatan untuk membantu ibu dan pengasuh di Timor-Leste memahami gejala pada anak dan selama kehamilan — serta memandu Anda ke perawatan yang tepat."
     },
     header: {
-      howItWorks: "Cara Kerja",
+      aboutMenuTitle: "Tentang MédLab",
+      aboutMenuSubtitle: "Apa & mengapa menggunakannya?",
+      howItWorks: "Beranda",
+      howItWorksSubtitle: "Kembali ke dasbor Anda",
       faq: "FAQ",
-      emergency: "Darurat",
-      system: "Sistem Operasional",
-      aboutMenuTitle: "Tentang MurakMed-AI",
-      aboutMenuSubtitle: "Apa & Mengapa menggunakannya?",
-      doctorPortal: "Portal Dokter",
-      patientMode: "Beralih ke Mode Pasien"
+      faqSubtitle: "Pertanyaan umum",
+      editProfile: "Profil Keluarga",
+      editProfileSubtitle: "Edit ibu & anak-anak",
+      language: "Bahasa"
     },
-    doctor: {
-      dashboard: "Dasbor Spesialis",
-      welcome: "Selamat Datang, Dr.",
-      upcoming: "Janji Temu Mendatang",
-      availability: "Ketersediaan Saya",
-      noAppointments: "Belum ada janji temu.",
-      patient: "Pasien",
-      symptoms: "Gejala",
-      time: "Waktu",
-      status: "Status",
-      manageSlots: "Kelola Slot",
-      updateStatus: "Perbarui Status",
-      currentStatus: "Status Saat Ini",
-      available: "Tersedia Hari Ini",
-      unavailable: "Tidak Tersedia",
-      tomorrow: "Tersedia Besok",
-      busy: "Sibuk/Penuh",
-      saveStatus: "Simpan Status",
-      viewRecord: "Lihat Rekam Medis",
-      notified: "Anda akan diberitahu jika ada janji temu baru."
-    },
-    auscultation: {
-      title: "Uji Auskultasi Spesialis",
-      subtitle: "Pemeriksaan fisik profesional dan analisis suara",
-      heart: "Suara Jantung",
-      lung: "Suara Paru",
-      bowel: "Suara Perut",
-      findings: "Temuan Klinis",
-      performBtn: "Jalankan Tes Auskultasi",
-      saveBtn: "Simpan Hasil Pemeriksaan",
-      heartPlaceholder: "Jelaskan ritme dan suara jantung (cth: S1, S2 terdengar, tidak ada bising)",
-      lungPlaceholder: "Jelaskan suara nafas (cth: Bersih secara bilateral, tidak ada mengi)",
-      bowelPlaceholder: "Jelaskan suara usus (cth: Normoaktif)",
-      findingsPlaceholder: "Ringkasan temuan pemeriksaan fisik",
-      success: "Hasil auskultasi berhasil direkam.",
-      viewResults: "Lihat Hasil Pemeriksaan"
-    },
-    scheduler: {
-      title: "Buat Janji Temu",
-      selectDate: "Pilih Tanggal",
-      selectTime: "Pilih Waktu",
-      confirm: "Konfirmasi Pemesanan",
-      morning: "Pagi",
-      afternoon: "Siang",
-      evening: "Sore",
-      selected: "Terpilih",
-      success: "Janji Temu Berhasil Disimpan!",
-      backToResults: "← Kembali ke Hasil",
-      pendingChoice: "Belum Memilih",
-      bookNow: "Buat Janji Temu",
-      reminders: {
-        title: "Pengingat",
-        enable: "Atur pengingat untuk janji temu ini",
-        method: "Metode Pengingat",
-        email: "Notifikasi Email",
-        app: "Notifikasi Aplikasi",
-        timing: "Kapan diingatkan?",
-        opt1: "1 jam sebelumnya",
-        opt2: "12 jam sebelumnya",
-        opt3: "1 hari sebelumnya"
-      }
-    },
-    dashboard: {
-      welcomeSub: "Selamat Datang di Masa Depan Kesehatan",
+    home: {
+      welcomeSub: "Pendamping Kesehatan Ibu & Anak",
       hello: "Halo",
-      heroDesc: "MurakMed-AI bukan sekadar alat analisis gejala. Ini adalah pendamping kesehatan cerdas Anda, menjembatani kesenjangan antara kompleksitas dan perawatan.",
-      actions: {
-        newAnalysis: "Analisis Baru",
-        newAnalysisDesc: "Analisis gejala Anda dengan AI",
-        history: "Riwayat Medis",
-        historyDesc: "Tinjau laporan masa lalu Anda",
-        profile: "Pengaturan Profil",
-        profileDesc: "Kelola identitas Anda"
-      },
-      insights: {
-        title: "Kekuatan MurakMed-AI",
-        subtitle: "Memanfaatkan model AI tercanggih di dunia untuk memberikan wawasan kesehatan lokal bagi Timor-Leste.",
-        item1Title: "Kecerdasan Instan",
-        item1Desc: "Detik untuk menganalisis, menit untuk bertindak. Kami menghilangkan waktu tunggu.",
-        item2Title: "Panduan Terverifikasi",
-        item2Desc: "Pemetaan kondisi-spesialis untuk memastikan Anda menemui dokter yang tepat.",
-        item3Title: "Teknologi Empati",
-        item3Desc: "Dibangun untuk orang-orang, dengan bahasa yang sederhana dan perhatian yang tulus.",
+      heroDesc: "Asisten kesehatan keluarga Anda: periksa gejala, pantau kehamilan, jaga jadwal vaksin, dan hubungi dokter saat dibutuhkan.",
+      cards: {
+        checker: "Periksa Gejala",
+        checkerDesc: "Analisis AI untuk anak atau kehamilan Anda",
+        tracker: "Pemantau Kehamilan",
+        trackerDesc: "Ikuti kehamilan Anda minggu demi minggu",
+        vaccines: "Vaksinasi",
+        vaccinesDesc: "Jaga jadwal vaksin anak-anak Anda",
+        doctor: "Bicara dengan Dokter",
+        doctorDesc: "Chat atau telepon tenaga kesehatan",
+        facilities: "Cari Fasilitas",
+        facilitiesDesc: "Rumah sakit dan puskesmas di dekat Anda"
       }
     },
-    auth: {
-      login: {
-        title: "Selamat Datang Kembali",
-        subtitle: "Masuk ke akun MurakMed Anda",
-        username: "Nama Pengguna",
-        password: "Kata Sandi",
-        forgot: "Lupa?",
-        signIn: "Masuk",
-        noAccount: "Belum punya akun?",
-        createAccount: "Buat Akun",
-        recent: "Baru digunakan di perangkat ini",
-        error: "Kredensial tidak valid. Coba 'Sarah Silva' / 'doctor123'",
-        cancel: "Batal",
-        doctorLogin: "Login Dokter/Spesialis"
-      },
-      signup: {
-        title: "Buat Akun",
-        subtitle: "Bergabung dengan MurakMed AI untuk memantau kesehatan Anda",
-        firstName: "Nama Depan",
-        lastName: "Nama Belakang",
-        email: "Alamat Email",
-        username: "Nama Pengguna",
-        password: "Kata Sandi",
-        dob: "Tanggal Lahir",
-        sex: "Jenis Kelamin",
-        uploadPhoto: "Unggah Foto Profil",
-        complete: "Selesaikan Pendaftaran",
-        haveAccount: "Sudah punya akun?",
-        signIn: "Masuk",
-        error: "Pendaftaran gagal. Silakan coba lagi.",
-        cancel: "Batal"
-      },
-      reset: {
-        title: "Atur Ulang Kata Sandi",
-        subtitle: "Verifikasi identitas Anda untuk mengamankan akun",
-        findAccount: "Cari Akun",
-        backToLogin: "Kembali ke Masuk",
-        hello: "Halo",
-        newPass: "Kata Sandi Baru",
-        confirmPass: "Konfirmasi Kata Sandi",
-        mismatch: "Kata sandi tidak cocok.",
-        length: "Kata sandi minimal 5 karakter.",
-        successTitle: "Kata Sandi Diperbarui!",
-        successDesc: "Akun Anda sekarang aman. Mengalihkan ke halaman masuk...",
-        goNow: "Buka Sekarang",
-        notYourAccount: "Bukan akun Anda?"
-      },
-      profile: {
-        title: "Pengaturan Akun",
-        subtitle: "Kelola profil medis dan keamanan Anda",
-        save: "Simpan Perubahan Profil",
-        success: "Profil berhasil diperbarui!",
-        back: "Kembali"
-      }
+    onboarding: {
+      title: "Selamat Datang di Médiku Labarik",
+      subtitle: "Ceritakan tentang keluarga Anda agar kami dapat mempersonalisasi perawatan. Semua data tetap di perangkat ini.",
+      editTitle: "Profil Keluarga",
+      momSection: "Tentang ibu",
+      momName: "Nama ibu",
+      momDob: "Tanggal lahir (opsional)",
+      pregnantQ: "Apakah Anda sedang hamil?",
+      yes: "Ya",
+      no: "Tidak",
+      lmp: "Hari pertama haid terakhir",
+      lmpHelp: "Kami menggunakannya untuk menghitung minggu kehamilan dan perkiraan tanggal persalinan.",
+      childrenSection: "Anak-anak Anda",
+      addChild: "Tambah anak",
+      childName: "Nama anak",
+      childDob: "Tanggal lahir",
+      childSex: "Jenis kelamin",
+      boy: "Laki-laki",
+      girl: "Perempuan",
+      remove: "Hapus",
+      noChildrenHint: "Anda dapat menambahkan anak sekarang atau nanti.",
+      save: "Simpan & Lanjutkan",
+      nameRequired: "Silakan masukkan nama ibu."
     },
-    history: {
-      title: "Riwayat Medis",
-      noRecords: "Belum ada catatan riwayat medis.",
-      startNew: "Mulai analisis gejala baru untuk membuat catatan.",
-      visits: "Kunjungan",
-      lastUpdate: "Pembaruan Terakhir",
-      snapshot: "Ringkasan Gejala:",
-      reference: "ID Referensi",
-      reportTitle: "Laporan Medis",
-      verifiedPatient: "Pasien Terverifikasi",
-      symptoms: "Gejala yang Dilaporkan",
-      notes: "Catatan Dokter / Ringkasan",
-      noNotes: "Tidak ada catatan tambahan untuk kunjungan ini.",
-      primaryDiagnosis: "Diagnosis Utama",
-      specialist: "Spesialis yang Disarankan",
-      archive: "Arsip Analisis Lengkap",
-      notAvailable: "Data analisis AI tidak tersedia untuk catatan ini.",
-      pendingSpecialist: "Belum Memilih Spesialis"
-    },
-    certificate: {
-      title: "SURAT KETERANGAN MEDIS",
-      subTitle: "Penilaian Kesehatan Kecerdasan Buatan",
-      certId: "ID Sertifikat",
-      issuedDate: "Tanggal Terbit",
-      patientInfo: "Informasi Pasien",
-      clinicalFindings: "Temuan Klinis & Analisis AI",
-      primaryDiagnosis: "Kondisi Utama yang Disarankan",
-      probability: "Kemungkinan",
-      reportedSymptoms: "Gejala yang Dilaporkan",
-      recommendations: "Rekomendasi",
-      advice: "Saran Kesehatan Umum",
-      disclaimer: "DISCLAIMER: Sertifikat ini dibuat oleh AI untuk tujuan informasi saja. Ini tidak menggantikan pemeriksaan fisik oleh praktisi medis terdaftar. Silakan berkonsultasi dengan dokter untuk diagnosis definitif.",
-      verified: "VERIFIKASI AI",
-      downloadBtn: "Unduh Sertifikat (PDF)",
-      notAvailable: "Sertifikat tersedia setelah bertemu dokter."
+    selector: {
+      title: "Siapa yang perlu bantuan hari ini?",
+      subtitle: "Pilih siapa yang ingin Anda periksa gejalanya.",
+      mother: "Ibu",
+      pregnantBadge: "Hamil",
+      week: "Minggu",
+      months: "bulan",
+      years: "tahun",
+      notPregnantNote: "Pemeriksaan kehamilan tersedia jika profil menyatakan Anda sedang hamil."
     },
     input: {
-      title: "Info Pasien & Gejala",
-      desc: "Berikan detail yang jelas untuk mendapatkan hasil yang akurat.",
-      name: "Nama Lengkap",
-      dob: "Tanggal Lahir",
+      title: "Jelaskan Gejala",
+      desc: "Berikan detail yang jelas untuk mendapatkan panduan yang akurat.",
+      forPatient: "Memeriksa untuk",
       age: "Umur",
-      sex: "Jenis Kelamin",
-      sexOptions: {
-        select: "Pilih (Opsional)...",
-        male: "Laki-laki",
-        female: "Perempuan",
-        other: "Lainnya"
-      },
-      address: "Alamat",
-      addressPlaceholder: "Jalan, Kota (Opsional)",
-      onset: "Kapan mulai sakit?",
+      weight: "Berat badan (kg, opsional)",
+      weightPlaceholder: "cth., 12",
+      gestationalAge: "Minggu kehamilan",
+      onset: "Kapan mulai?",
       onsetPlaceholder: "cth. 2 hari yang lalu (Opsional)",
       symptomsLabel: "Jelaskan Gejala",
-      symptomsPlaceholder: "Jelaskan apa yang dirasakan pasien, atau unggah gambar...",
+      symptomsPlaceholder: "Jelaskan apa yang terjadi, atau unggah foto...",
       imagePlaceholder: "Tambahkan teks opsional untuk menjelaskan gambar...",
       quickAdd: "Tambah Cepat:",
       uploadBtn: "Tambah Foto",
       changePhoto: "Ganti Foto",
-      analyzeBtn: "Rekam & Analisis",
+      analyzeBtn: "Analisis",
       analyzing: "Menganalisis...",
-      fileError: "File terlalu besar. Harap unggah gambar di bawah 5MB."
+      fileError: "File terlalu besar. Harap unggah gambar di bawah 5MB.",
+      back: "← Kembali"
     },
-    commonSymptoms: ["Sakit Kepala", "Demam", "Batuk", "Mual", "Lelah", "Sakit Tenggorokan", "Gatal", "Pusing"],
+    childSymptoms: ["Demam", "Batuk", "Diare", "Muntah", "Tidak mau makan", "Ruam", "Napas cepat", "Sering menangis"],
+    pregnancySymptoms: ["Mual", "Sakit kepala", "Bengkak", "Pendarahan", "Nyeri perut", "Pusing", "Gerakan bayi berkurang", "Sakit punggung"],
     results: {
       title: "Hasil Analisis",
-      recordSaved: "Simpan ke Riwayat",
-      recordFailed: "Gagal Menyimpan",
-      newRecord: "Rekam Baru",
+      newRecord: "Pemeriksaan Baru",
+      translating: "Menerjemahkan ke",
       emergencyTitle: "Potensi Darurat Medis",
-      emergencyDefault: "Gejala Anda menunjukkan kondisi serius. Segera cari bantuan medis atau hubungi layanan darurat.",
-      seekEmergency: "Cari Layanan Darurat",
+      emergencyDefault: "Gejala ini dapat menunjukkan kondisi serius. Segera pergi ke fasilitas kesehatan terdekat.",
+      seekEmergency: "Hubungi Dokter Sekarang",
       conditionsTitle: "Kemungkinan Kondisi",
       recommendedAction: "Tindakan yang Disarankan",
       whyThis: "Mengapa ini cocok:",
       medications: "Saran Obat & Perawatan",
       dosage: "Dosis:",
       nextStep: "LANGKAH BERIKUTNYA",
-      disclaimer: "MurakMed AI hanya menyediakan informasi. Ini tidak menggantikan saran medis profesional, diagnosis, atau perawatan.",
-      specialistsTitle: "Recommended Specialists",
-      callDoctor: "Hubungi Dokter",
-      noSpecialist: "Tidak ada spesialis khusus yang ditemukan. Silakan konsultasi dengan Dokter Umum.",
-      selectSpecialist: "Pilih spesialis pilihan Anda",
+      disclaimer: "Médiku Labarik hanya menyediakan informasi. Ini tidak menggantikan saran medis profesional, diagnosis, atau perawatan.",
+      selectSpecialist: "Pilih penyedia layanan",
       specialistChosen: "Terpilih",
+      choose: "Pilih",
+      noSpecialist: "Tidak ada spesialis khusus yang ditemukan. Silakan konsultasi dengan Dokter Umum.",
       filterLabel: "Filter berdasarkan ketersediaan:",
       filterAll: "Semua",
       filterToday: "Tersedia Hari Ini",
       filterTomorrow: "Besok",
-      filterLater: "Nanti"
+      filterLater: "Nanti",
+      talkToDoctor: "Bicara dengan Dokter Ini"
     },
     specialistNames: {
       "General Practitioner": "Dokter Umum",
-      "Cardiologist": "Spesialis Jantung",
-      "Dermatologist": "Spesialis Kulit",
-      "Neurologist": "Spesialis Saraf",
-      "Pediatrician": "Spesialis Anak",
-      "ENT Specialist": "Spesialis THT",
-      "Internal Medicine": "Spesialis Penyakit Dalam",
-      "Ophthalmologist": "Spesialis Mata",
-      "Orthopedic Surgeon": "Bedah Ortopedi",
+      "Pediatrician": "Dokter Anak",
       "Obstetrician-Gynecologist": "Dokter Kandungan",
-      "Dentist": "Dokter Gigi",
-      "Psychiatrist": "Psikiater"
+      "Midwife": "Bidan"
+    },
+    tracker: {
+      title: "Pemantau Kehamilan",
+      subtitle: "Mengikuti perjalanan Anda minggu demi minggu",
+      week: "Minggu",
+      of40: "dari 40",
+      trimester: "Trimester",
+      trimesterNames: ["Trimester pertama", "Trimester kedua", "Trimester ketiga"],
+      dueDate: "Perkiraan tanggal persalinan",
+      daysToGo: "hari lagi",
+      overdueNote: "Sudah melewati perkiraan tanggal persalinan — segera temui bidan Anda.",
+      tipsTitle: "Tips untuk tahap ini",
+      tips: [
+        [
+          "Mulai konsumsi asam folat dan tablet zat besi dari puskesmas.",
+          "Makan sedikit tapi sering jika merasa mual.",
+          "Hindari alkohol, rokok, dan obat tanpa resep.",
+          "Lakukan kunjungan ANC (pemeriksaan kehamilan) pertama sedini mungkin."
+        ],
+        [
+          "Anda seharusnya mulai merasakan gerakan bayi — beri tahu bidan jika tidak.",
+          "Tidur dengan kelambu untuk mencegah malaria dan demam berdarah.",
+          "Terus lakukan kunjungan ANC dan minum tablet zat besi.",
+          "Makan makanan kaya protein: telur, ikan, kacang-kacangan, dan sayuran hijau."
+        ],
+        [
+          "Hitung gerakan bayi setiap hari — gerakan berkurang adalah tanda bahaya.",
+          "Rencanakan persalinan: tentukan fasilitas dan transportasi sejak awal.",
+          "Waspadai tanda bahaya: pendarahan, sakit kepala hebat, bengkak di wajah atau tangan.",
+          "Siapkan pakaian bersih dan dokumen untuk persalinan."
+        ]
+      ],
+      ancTitle: "Kunjungan Pemeriksaan Kehamilan (ANC)",
+      ancSubtitle: "WHO merekomendasikan 8 kontak selama kehamilan",
+      contact: "Kontak",
+      weekLabel: "Minggu",
+      done: "Selesai",
+      next: "Kunjungan berikutnya",
+      upcoming: "Mendatang",
+      notPregnant: "Tidak ada kehamilan aktif",
+      notPregnantDesc: "Perbarui profil keluarga Anda jika sedang hamil untuk mengaktifkan pemantau.",
+      updateProfile: "Perbarui Profil"
+    },
+    vaccines: {
+      title: "Jadwal Vaksinasi",
+      subtitle: "Program imunisasi nasional Timor-Leste (EPI)",
+      selectChild: "Pilih anak",
+      statusOverdue: "Terlambat",
+      statusDue: "Waktunya sekarang",
+      statusUpcoming: "Mendatang",
+      statusGiven: "Sudah diberikan",
+      dueAt: "Dijadwalkan pada",
+      atBirth: "Saat lahir",
+      weeks: "minggu",
+      months: "bulan",
+      markGiven: "Tandai sudah diberikan",
+      unmark: "Batalkan",
+      noChildren: "Belum ada anak di profil keluarga Anda.",
+      addChildHint: "Tambahkan anak di profil keluarga untuk melihat jadwal vaksinnya.",
+      goToProfile: "Buka Profil Keluarga"
+    },
+    facilities: {
+      title: "Cari Fasilitas Kesehatan",
+      subtitle: "Rumah sakit, puskesmas, dan pos kesehatan di Timor-Leste",
+      filterLabel: "Kotamadya",
+      all: "Semua kotamadya",
+      callBtn: "Telepon",
+      types: {
+        "Hospital": "Rumah Sakit",
+        "CHC": "Puskesmas",
+        "Health Post": "Pos Kesehatan",
+        "Clinic": "Klinik"
+      }
+    },
+    doctorTalk: {
+      title: "Bicara dengan Dokter",
+      subtitle: "Chat atau telepon tenaga kesehatan",
+      online: "Online",
+      chatBtn: "Mulai Chat",
+      callBtn: "Mulai Panggilan",
+      inputPlaceholder: "Ketik pesan Anda...",
+      calling: "Memanggil...",
+      inCall: "Dalam panggilan",
+      mute: "Bisukan",
+      muted: "Dibisukan",
+      speaker: "Pengeras suara",
+      endCall: "Akhiri Panggilan",
+      callEnded: "Panggilan berakhir",
+      duration: "Durasi",
+      back: "← Kembali",
+      demoBadge: "Simulasi demo",
+      cannedReplies: [
+        "Halo! Saya Dr. Sarah. Saya sudah melihat analisis AI yang Anda bagikan. Bagaimana kondisi pasien sekarang?",
+        "Terima kasih. Berdasarkan yang Anda jelaskan, pastikan pasien tetap terhidrasi dan pantau suhu tubuh setiap beberapa jam.",
+        "Jika Anda melihat tanda bahaya — sulit bernapas, kejang, atau kondisi memburuk — segera pergi ke fasilitas kesehatan terdekat.",
+        "Anda melakukan hal yang benar dengan memeriksa sejak dini. Ada pertanyaan lain untuk saya?"
+      ]
+    },
+    paywall: {
+      title: "MédLab Premium",
+      subtitle: "Akses langsung ke dokter dan bidan, kapan pun Anda membutuhkannya.",
+      freeName: "Gratis",
+      freeFeatures: ["Pemeriksaan gejala AI", "Pemantau kehamilan", "Jadwal vaksinasi", "Direktori fasilitas"],
+      premiumName: "Premium",
+      premiumFeatures: ["Semua fitur Gratis", "Chat tanpa batas dengan dokter", "Panggilan suara dengan spesialis", "Panduan darurat prioritas"],
+      perMonth: "/ bulan",
+      price: "$2.99",
+      free: "$0",
+      subscribeBtn: "Berlangganan Sekarang",
+      activeBadge: "Premium Aktif",
+      maybeLater: "Nanti saja",
+      note: "Mode demo: tidak ada pembayaran yang diproses. Opsi pembayaran untuk Timor-Leste ada di roadmap kami."
     },
     about: {
       back: "Kembali",
-      title: "Tentang MurakMed-",
-      bio1: "MurakMed-AI adalah asisten kesehatan cerdas yang dirancang untuk menjembatani kesenjangan antara pasien dan pemahaman medis. Didukung oleh Kecerdasan Buatan canggih, membantu pengguna menguraikan gejala kompleks dan memberikan wawasan kesehatan yang instan dan mudah dimengerti.",
-      bio2: "Misi kami adalah membuat penilaian kesehatan awal dapat diakses oleh semua orang, memastikan bahwa bahasa dan lokasi tidak pernah menjadi penghalang untuk memahami kesehatan Anda sendiri.",
-      whyTitle: "Mengapa Anda harus menggunakan MurakMed-AI",
+      title: "Tentang Médiku Labarik ",
+      bio1: "Médiku Labarik (MédLab) adalah asisten kesehatan ibu dan anak yang cerdas, dibuat untuk Timor-Leste. Didukung Kecerdasan Buatan, aplikasi ini membantu ibu dan pengasuh memahami gejala pada anak dan selama kehamilan, serta menghubungkan mereka dengan perawatan yang tepat.",
+      bio2: "Misi kami adalah mengurangi penyakit anak dan ibu yang dapat dicegah dengan menghadirkan panduan kesehatan yang terpercaya dan mudah dipahami — dalam bahasa Tetum, Inggris, dan Indonesia — ke tangan setiap keluarga.",
+      whyTitle: "Mengapa menggunakan MédLab",
       features: [
-        { title: "Analisis AI Canggih", desc: "Menggunakan model Gemini mutakhir untuk menganalisis gejala dengan presisi tinggi dan memberikan saran medis yang sadar konteks." },
-        { title: "Hasil Instan", desc: "Tidak ada ruang tunggu. Dapatkan analisis awal kondisi Anda dalam hitungan detik, tersedia 24/7 kapan pun Anda membutuhkannya." },
-        { title: "Perawatan Komprehensif", desc: "Lebih dari sekadar menamai penyakit. Kami memberikan tindakan yang disarankan, obat potensial, dan saran gaya hidup." },
-        { title: "Fokus Privasi", desc: "Perjalanan kesehatan Anda bersifat pribadi. Kami memproses gejala Anda secara anonim dan memprioritaskan keamanan data Anda." }
+        { title: "Dibuat untuk Ibu & Anak", desc: "Analisis sesuai umur untuk anak dan sesuai usia kehamilan untuk ibu — bukan saran umum untuk orang dewasa." },
+        { title: "Instan, 24/7", desc: "Tanpa ruang tunggu. Dapatkan panduan awal dalam hitungan detik, siang atau malam, dalam bahasa Anda." },
+        { title: "Dari Saran ke Tindakan", desc: "Peringatan tanda bahaya, pencocokan penyedia layanan, pengingat vaksin, dan jalur langsung ke dokter." },
+        { title: "Privasi Utama", desc: "Profil keluarga Anda tetap di perangkat Anda. Kami memprioritaskan keamanan data Anda." }
       ]
     },
     faq: {
       title: "Pertanyaan Umum (FAQ)",
       items: [
         {
-          q: "Apakah MurakMed AI pengganti dokter asli?",
-          a: "Tidak. MurakMed AI adalah alat informasi yang dirancang untuk membantu Anda memahami potensi penyebab gejala Anda. Ini tidak dapat memberikan diagnosis medis resmi. Selalu berkonsultasi dengan profesional kesehatan yang berkualifikasi."
+          q: "Apakah Médiku Labarik pengganti dokter sungguhan?",
+          a: "Tidak. MédLab adalah alat informasi untuk membantu Anda memahami kemungkinan penyebab gejala pada anak Anda atau selama kehamilan. Ini tidak dapat memberikan diagnosis medis resmi. Selalu konsultasikan keputusan medis dengan tenaga kesehatan yang berkualifikasi."
         },
         {
-          q: "Bagaimana AI menganalisis gejala saya?",
-          a: "Aplikasi ini menggunakan model Google Gemini AI yang canggih. Ini membandingkan gejala yang Anda jelaskan (teks atau gambar) dengan basis data pengetahuan medis yang luas untuk mengidentifikasi pola dan menyarankan kondisi yang mungkin."
-        },
-        {
-          q: "Apakah data pribadi saya aman?",
-          a: "Ya. Kami memprioritaskan privasi. Meskipun kami merekam data kunjungan untuk membantu meningkatkan pelacakan kesehatan, kami tidak membagikan informasi identitas pribadi Anda kepada pengiklan pihak ketiga."
+          q: "Bagaimana AI menganalisis gejala?",
+          a: "Aplikasi ini menggunakan model AI medis. Ia membandingkan gejala yang Anda jelaskan (teks atau foto) dengan pengetahuan medis — termasuk tanda bahaya anak dan tanda bahaya kehamilan — untuk menyarankan kemungkinan kondisi dan langkah berikutnya."
         },
         {
           q: "Apa yang harus saya lakukan jika aplikasi menunjukkan peringatan Darurat merah?",
-          a: "Jika Anda melihat peringatan Darurat merah, abaikan detail lainnya dan segera cari bantuan medis di rumah sakit terdekat atau hubungi layanan darurat segera."
+          a: "Jika Anda melihat peringatan Darurat merah, jangan menunggu. Segera pergi ke fasilitas kesehatan atau rumah sakit terdekat, atau gunakan fitur 'Bicara dengan Dokter' untuk panduan mendesak."
         },
         {
-          q: "Mengapa beberapa rekomendasi spesialis dalam bahasa Inggris?",
-          a: "Untuk memastikan keakuratan saat mencocokkan dengan basis data dokter lokal kami, gelar medis tertentu (seperti 'Cardiologist') disimpan dalam bahasa Inggris, meskipun sisa aplikasi dalam bahasa Indonesia."
+          q: "Apakah data keluarga saya aman?",
+          a: "Ya. Profil keluarga dan pemeriksaan kesehatan Anda hanya disimpan di perangkat Anda sendiri. Kami tidak membagikan informasi pribadi Anda."
+        },
+        {
+          q: "Mengapa beberapa nama penyedia layanan dalam bahasa Inggris?",
+          a: "Agar cocok dengan direktori penyedia lokal kami, gelar profesional (seperti 'Pediatrician') tetap dalam bahasa Inggris, meskipun bagian lain aplikasi dalam bahasa Tetum atau Indonesia."
         }
       ]
     },
     footer: {
-      safety: "MurakMed AI hanya memberikan saran informatif. Untuk hasil terbaik, mintalah saran dari dokter atau profesional kesehatan yang berkualifikasi.",
-      copyright: "Hak Cipta Dilindungi Undang-Undang."
+      safety: "Médiku Labarik hanya memberikan saran informatif. Untuk keputusan medis, selalu konsultasikan dengan dokter, bidan, atau fasilitas kesehatan terdekat."
     },
-    error: "Ada masalah selama analisis. Silakan coba lagi."
+    error: "Ada masalah selama analisis. Pastikan layanan AI berjalan dan coba lagi."
   }
 };

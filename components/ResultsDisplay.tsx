@@ -1,171 +1,74 @@
-
 import React, { useState, useEffect } from 'react';
-import { AnalysisResult, Condition, Specialist, PatientData, Language, AuscultationData } from '../types';
-import { 
-  Info, 
-  ChevronDown, 
-  ChevronUp, 
-  Pill, 
-  CheckCircle2, 
-  Stethoscope, 
-  ShieldAlert, 
-  Phone, 
-  FileText,
+import { AnalysisResult, Condition, Specialist } from '../types';
+import {
+  Info,
+  ChevronDown,
+  ChevronUp,
+  Pill,
+  CheckCircle2,
+  Stethoscope,
+  ShieldAlert,
   Check,
-  CalendarDays,
-  UserCheck,
-  Filter
+  Filter,
+  MessageCircleHeart,
+  PhoneCall
 } from 'lucide-react';
 import { MOCK_SPECIALISTS } from '../constants/medicalData';
-import MedicalCertificate from './MedicalCertificate';
-import ReactDOM from 'react-dom/client';
 
 interface ResultsDisplayProps {
   result: AnalysisResult;
   t: any;
-  patient?: PatientData;
-  onSpecialistSelect: (specialist: Specialist) => void;
-  onScheduleAppointment: () => void;
   selectedSpecialist: Specialist | null;
-  language: Language;
-  readOnly?: boolean;
-  auscultation?: AuscultationData;
+  onSpecialistSelect: (specialist: Specialist) => void;
+  onTalkToDoctor: (specialist: Specialist | null) => void;
 }
 
 type AvailabilityFilter = 'all' | 'today' | 'tomorrow' | 'later';
 
-const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ 
-  result, 
-  t, 
-  patient, 
-  onSpecialistSelect,
-  onScheduleAppointment,
+const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
+  result,
+  t,
   selectedSpecialist,
-  language,
-  readOnly = false,
-  auscultation
+  onSpecialistSelect,
+  onTalkToDoctor
 }) => {
   const [filteredSpecialists, setFilteredSpecialists] = useState<Specialist[]>([]);
   const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>('all');
 
   useEffect(() => {
-    // If in read-only mode and we have a selection, only show that one
-    if (readOnly && selectedSpecialist) {
-      setFilteredSpecialists([selectedSpecialist]);
-      return;
-    }
+    const recommended = (result?.recommendedSpecialist || '').toLowerCase();
 
-    if (result && result.recommendedSpecialist) {
-      const recommended = result.recommendedSpecialist.toLowerCase();
-      
-      let matches = MOCK_SPECIALISTS.filter(s => 
-        s.specialty.toLowerCase() === recommended
+    let matches = MOCK_SPECIALISTS.filter(s => s.specialty.toLowerCase() === recommended);
+
+    if (matches.length === 0) {
+      matches = MOCK_SPECIALISTS.filter(s =>
+        recommended.includes(s.specialty.toLowerCase()) ||
+        s.specialty.toLowerCase().includes(recommended)
       );
-
-      if (matches.length === 0) {
-        matches = MOCK_SPECIALISTS.filter(s => 
-           recommended.includes(s.specialty.toLowerCase()) || 
-           s.specialty.toLowerCase().includes(recommended)
-        );
-      }
-
-      if (matches.length === 0) {
-        matches = MOCK_SPECIALISTS.filter(s => s.specialty === "General Practitioner");
-      }
-      
-      // Apply availability filter
-      if (availabilityFilter !== 'all') {
-        matches = matches.filter(s => {
-          if (availabilityFilter === 'today') return s.availability.toLowerCase().includes('today');
-          if (availabilityFilter === 'tomorrow') return s.availability.toLowerCase().includes('tomorrow');
-          if (availabilityFilter === 'later') return !s.availability.toLowerCase().includes('today') && !s.availability.toLowerCase().includes('tomorrow');
-          return true;
-        });
-      }
-
-      setFilteredSpecialists(matches);
-    } else {
-       let matches = MOCK_SPECIALISTS.filter(s => s.specialty === "General Practitioner");
-       if (availabilityFilter !== 'all') {
-          matches = matches.filter(s => {
-            if (availabilityFilter === 'today') return s.availability.toLowerCase().includes('today');
-            if (availabilityFilter === 'tomorrow') return s.availability.toLowerCase().includes('tomorrow');
-            if (availabilityFilter === 'later') return !s.availability.toLowerCase().includes('today') && !s.availability.toLowerCase().includes('tomorrow');
-            return true;
-          });
-       }
-       setFilteredSpecialists(matches);
-    }
-  }, [result, readOnly, selectedSpecialist, availabilityFilter]);
-
-  const handleCallDoctor = (phone: string, name: string) => {
-    alert(`Calling ${name} at ${phone}...`);
-  };
-
-  const handlePrintCertificate = () => {
-    if (!patient) return;
-
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) {
-      alert("Popup blocked! Please allow popups to download the certificate.");
-      return;
     }
 
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Medical Certificate - ${patient.name}</title>
-          <script src="https://cdn.tailwindcss.com"></script>
-          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Poppins:wght@700;900&display=swap" rel="stylesheet">
-          <style>
-            @media print {
-              body { background-color: white !important; }
-              #medical-certificate { border: none !important; shadow: none !important; margin: 0 !important; }
-            }
-          </style>
-        </head>
-        <body class="bg-slate-100 py-10">
-          <div id="print-root"></div>
-        </body>
-      </html>
-    `);
-
-    const printRoot = printWindow.document.getElementById('print-root');
-    if (printRoot) {
-      const root = ReactDOM.createRoot(printRoot);
-      root.render(<MedicalCertificate result={result} patient={patient} t={t} selectedSpecialist={selectedSpecialist || undefined} auscultation={auscultation} />);
-      
-      setTimeout(() => {
-        printWindow.print();
-      }, 800);
+    if (matches.length === 0) {
+      matches = MOCK_SPECIALISTS.filter(s => s.specialty === "General Practitioner");
     }
-  };
+
+    if (availabilityFilter !== 'all') {
+      matches = matches.filter(s => {
+        const avail = s.availability.toLowerCase();
+        if (availabilityFilter === 'today') return avail.includes('today');
+        if (availabilityFilter === 'tomorrow') return avail.includes('tomorrow');
+        return !avail.includes('today') && !avail.includes('tomorrow');
+      });
+    }
+
+    setFilteredSpecialists(matches);
+  }, [result, availabilityFilter]);
 
   if (!result) return null;
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {patient && (
-        <div className="flex flex-col sm:flex-row justify-end gap-3 mb-4 no-print">
-           {auscultation ? (
-             <button 
-              onClick={handlePrintCertificate}
-              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-slate-900 dark:bg-slate-800 hover:bg-black text-white text-xs font-black uppercase tracking-widest rounded-xl shadow-lg transition-all active:scale-[0.95] border border-slate-700"
-             >
-               <FileText className="w-4 h-4 text-blue-400" />
-               {t.certificate.downloadBtn}
-             </button>
-           ) : (
-             <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30 rounded-xl text-[10px] font-bold text-blue-600 dark:text-blue-400 italic">
-                <Info className="w-3.5 h-3.5" />
-                {t.certificate.notAvailable}
-             </div>
-           )}
-        </div>
-      )}
-
       {result.emergencyAlert && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-6 flex flex-col sm:flex-row gap-4 animate-pulse-slow">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-6 flex flex-col sm:flex-row gap-4">
            <div className="bg-red-100 dark:bg-red-900/40 p-3 rounded-full h-fit w-fit flex-shrink-0">
              <ShieldAlert className="w-8 h-8 text-red-600 dark:text-red-400" />
            </div>
@@ -174,7 +77,11 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
              <p className="text-red-700 dark:text-red-400 leading-relaxed font-medium">
                {result.emergencyMessage || t.results.emergencyDefault}
              </p>
-             <button className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-sm transition-colors text-sm">
+             <button
+               onClick={() => onTalkToDoctor(selectedSpecialist)}
+               className="mt-4 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-sm transition-colors text-sm flex items-center gap-2"
+             >
+               <PhoneCall className="w-4 h-4" />
                {t.results.seekEmergency}
              </button>
            </div>
@@ -186,7 +93,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           <Stethoscope className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           {t.results.conditionsTitle}
         </h3>
-        
+
         {result.possibleConditions?.map((condition, idx) => (
           <ConditionCard key={idx} condition={condition} index={idx} t={t} />
         ))}
@@ -213,12 +120,12 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
             <Stethoscope className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-            {readOnly ? (t.history.specialist) : (t.results.selectSpecialist)}
+            {t.results.selectSpecialist}
             <span className="text-xs font-normal text-slate-500 dark:text-slate-400 ml-2 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-full border border-slate-200 dark:border-slate-700">
               {t.specialistNames[result.recommendedSpecialist] || result.recommendedSpecialist || "General"}
             </span>
           </h3>
-          {selectedSpecialist && !readOnly && (
+          {selectedSpecialist && (
             <div className="bg-blue-50 dark:bg-blue-900/30 px-3 py-1.5 rounded-xl border border-blue-100 dark:border-blue-800 flex items-center gap-2">
               <Check className="w-4 h-4 text-blue-600" />
               <span className="text-xs font-bold text-blue-700 dark:text-blue-400">{selectedSpecialist.name} {t.results.specialistChosen}</span>
@@ -226,44 +133,38 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           )}
         </div>
 
-        {/* Availability Filter UI */}
-        {!readOnly && (
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-widest">
-              <Filter className="w-3.5 h-3.5" />
-              {t.results.filterLabel}
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {(['all', 'today', 'tomorrow', 'later'] as AvailabilityFilter[]).map((filter) => (
-                <button
-                  key={filter}
-                  onClick={() => setAvailabilityFilter(filter)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border
-                    ${availabilityFilter === filter 
-                      ? 'bg-blue-600 border-blue-600 text-white shadow-md' 
-                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-300'}`}
-                >
-                  {t.results[`filter${filter.charAt(0).toUpperCase() + filter.slice(1)}`]}
-                </button>
-              ))}
-            </div>
+        {/* Availability Filter */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-widest">
+            <Filter className="w-3.5 h-3.5" />
+            {t.results.filterLabel}
           </div>
-        )}
-        
+          <div className="flex flex-wrap gap-2">
+            {(['all', 'today', 'tomorrow', 'later'] as AvailabilityFilter[]).map((filter) => (
+              <button
+                key={filter}
+                onClick={() => setAvailabilityFilter(filter)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border
+                  ${availabilityFilter === filter
+                    ? 'bg-blue-600 border-blue-600 text-white shadow-md'
+                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-300'}`}
+              >
+                {t.results[`filter${filter.charAt(0).toUpperCase() + filter.slice(1)}`]}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {filteredSpecialists.length > 0 ? (
-          <div className={`grid gap-4 ${readOnly ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2'}`}>
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
             {filteredSpecialists.map((specialist) => {
               const isSelected = selectedSpecialist?.id === specialist.id;
-              
-              // In read-only mode, if this wasn't the selected one, don't show it (already handled by useEffect filter but double checking)
-              if (readOnly && !isSelected) return null;
 
               return (
-                <div 
-                  key={specialist.id} 
-                  className={`relative bg-white dark:bg-slate-800 border transition-all duration-300 rounded-2xl p-4 flex items-center gap-4 shadow-sm
-                    ${isSelected ? 'border-blue-500 ring-2 ring-blue-500/10' : 'border-slate-200 dark:border-slate-700'}
-                    ${!readOnly ? 'hover:shadow-md' : ''}`}
+                <div
+                  key={specialist.id}
+                  className={`relative bg-white dark:bg-slate-800 border transition-all duration-300 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md
+                    ${isSelected ? 'border-blue-500 ring-2 ring-blue-500/10' : 'border-slate-200 dark:border-slate-700'}`}
                 >
                   <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 border-2 border-slate-100 dark:border-slate-700">
                     <img src={specialist.image} alt={specialist.name} className="w-full h-full object-cover" />
@@ -277,45 +178,29 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                       <p className={`text-[10px] font-bold mt-1 ${specialist.availability.includes('Today') ? 'text-emerald-500' : 'text-slate-400'}`}>
                         {specialist.availability}
                       </p>
-                      
-                      {!readOnly ? (
-                        <div className="mt-3 flex flex-wrap gap-2">
+
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <button
+                          onClick={() => onSpecialistSelect(specialist)}
+                          className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg transition-all
+                            ${isSelected
+                              ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
+                              : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-blue-50 hover:text-blue-600'}`}
+                        >
+                          {isSelected ? t.results.specialistChosen : t.results.choose}
+                        </button>
+
+                        {isSelected && (
                           <button
-                            onClick={() => onSpecialistSelect(specialist)}
-                            className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg transition-all
-                              ${isSelected 
-                                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' 
-                                : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-blue-50 hover:text-blue-600'}`}
+                            onClick={() => onTalkToDoctor(specialist)}
+                            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-all shadow-md shadow-blue-500/20 active:scale-[0.95] border border-blue-500"
                           >
-                            {isSelected ? t.results.specialistChosen : t.results.callDoctor}
+                            <MessageCircleHeart className="w-3.5 h-3.5" />
+                            {t.results.talkToDoctor}
                           </button>
-                          
-                          {isSelected && (
-                            <button 
-                              onClick={onScheduleAppointment}
-                              className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-all shadow-md shadow-blue-500/20 active:scale-[0.95] border border-blue-500"
-                            >
-                              <CalendarDays className="w-3.5 h-3.5" />
-                              {t.scheduler.bookNow}
-                            </button>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="mt-2 flex items-center gap-1.5 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest">
-                          <UserCheck className="w-3.5 h-3.5" />
-                          Chosen Specialist
-                        </div>
-                      )}
+                        )}
+                      </div>
                   </div>
-                  {!readOnly && (
-                    <button 
-                      onClick={() => handleCallDoctor(specialist.phone, specialist.name)}
-                      className="bg-green-500 hover:bg-green-600 text-white p-2.5 rounded-full shadow-sm transition-colors flex-shrink-0"
-                      aria-label="Call Doctor"
-                    >
-                      <Phone className="w-5 h-5" />
-                    </button>
-                  )}
                 </div>
               );
             })}
@@ -329,11 +214,11 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
               {t.results.noSpecialist}
             </p>
             {availabilityFilter !== 'all' && (
-              <button 
+              <button
                 onClick={() => setAvailabilityFilter('all')}
                 className="mt-3 text-xs font-bold text-blue-600 hover:underline"
               >
-                Clear availability filter
+                {t.results.filterAll}
               </button>
             )}
           </div>
@@ -359,16 +244,18 @@ const ConditionCard: React.FC<{ condition: Condition; index: number; t: any }> =
 
   return (
     <div className={`bg-white dark:bg-slate-800 rounded-xl shadow-sm border transition-all duration-300 ${expanded ? 'ring-2 ring-blue-500/10 dark:ring-blue-400/10 border-blue-200 dark:border-blue-800' : 'border-slate-200 dark:border-slate-700 hover:border-blue-200 dark:hover:border-blue-800'}`}>
-      <div 
+      <div
         className="p-5 cursor-pointer flex items-start justify-between gap-4"
         onClick={() => setExpanded(!expanded)}
       >
         <div className="flex-1">
            <div className="flex flex-wrap items-center gap-3 mb-2">
              <h4 className="text-xl font-bold text-slate-800 dark:text-white">{condition.name}</h4>
-             <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide border ${probabilityColor}`}>
-               {condition.probability}
-             </span>
+             {condition.probability && (
+               <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide border ${probabilityColor}`}>
+                 {condition.probability}
+               </span>
+             )}
            </div>
            <p className={`text-slate-600 dark:text-slate-400 ${expanded ? '' : 'line-clamp-2'}`}>{condition.description}</p>
         </div>

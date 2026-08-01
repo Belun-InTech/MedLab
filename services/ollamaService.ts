@@ -1,11 +1,13 @@
 import { AnalysisResult, PatientData, Language } from "../types";
 
-// Note: You can change these models based on what you have pulled in Ollama
-// e.g., 'mistral', 'llama3', 'llama3.2', 'gemma2'
-const DEFAULT_TEXT_MODEL = "gemma4"; 
-// Note: Vision model for image analysis. E.g., 'llava', 'llama3.2-vision'
-const DEFAULT_VISION_MODEL = "llava"; 
-const OLLAMA_API_URL = "http://localhost:11434/api/chat";
+// Configurable via .env.local (VITE_ prefix required for client exposure), e.g.:
+//   VITE_OLLAMA_URL=http://192.168.1.10:11434
+//   VITE_OLLAMA_TEXT_MODEL=gemma3
+//   VITE_OLLAMA_VISION_MODEL=llava
+const OLLAMA_BASE_URL = import.meta.env.VITE_OLLAMA_URL || "http://localhost:11434";
+const TEXT_MODEL = import.meta.env.VITE_OLLAMA_TEXT_MODEL || "gemma3";
+const VISION_MODEL = import.meta.env.VITE_OLLAMA_VISION_MODEL || "llava";
+const OLLAMA_CHAT_URL = `${OLLAMA_BASE_URL}/api/chat`;
 
 // Schema definition for Ollama Structured Output
 const analysisSchema = {
@@ -29,7 +31,7 @@ const analysisSchema = {
           probability: { type: "string", description: "Likelihood: Must be exactly 'High', 'Moderate', or 'Low'." },
           description: { type: "string", description: "Brief explanation of the condition." },
           reasoning: { type: "string", description: "Why this condition matches the provided symptoms." },
-          recommendedAction: { type: "string", description: "What the patient should do next." },
+          recommendedAction: { type: "string", description: "What the caregiver or mother should do next." },
           suggestedMedications: {
             type: "array",
             items: {
@@ -52,7 +54,7 @@ const analysisSchema = {
     },
     recommendedSpecialist: {
       type: "string",
-      description: "The SINGLE BEST medical specialist type for this case. MUST be one of: 'General Practitioner', 'Cardiologist', 'Dermatologist', 'Neurologist', 'Pediatrician', 'ENT Specialist', 'Internal Medicine', 'Ophthalmologist', 'Orthopedic Surgeon', 'Obstetrician-Gynecologist', 'Dentist', or 'Psychiatrist'.",
+      description: "The SINGLE BEST care provider type for this case. MUST be one of: 'General Practitioner', 'Pediatrician', 'Obstetrician-Gynecologist', or 'Midwife'.",
     },
     disclaimer: {
       type: "string",
@@ -70,12 +72,91 @@ const getLanguageName = (lang: Language) => {
   }[lang];
 };
 
+// POST with thinking disabled (reasoning traces make hybrid models far too slow for
+// interactive use); models that reject the `think` parameter get a retry without it.
+const postChat = async (payload: Record<string, unknown>): Promise<Response> => {
+  const send = (body: Record<string, unknown>) => fetch(OLLAMA_CHAT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  let response = await send({ ...payload, think: false });
+  if (!response.ok) {
+    const errText = await response.text();
+    if (/think/i.test(errText)) {
+      response = await send(payload);
+    } else {
+      throw new Error(`Ollama API error: ${response.status} ${errText}`);
+    }
+  }
+  return response;
+};
+
+const buildChildPrompt = (p: PatientData, langName: string, symptomDescription: string) => `
+  Analyze the following PEDIATRIC case and identify potential medical conditions.
+
+  Child Patient:
+  - Age: ${p.ageMonths < 24 ? `${p.ageMonths} months old` : `${p.ageYears} years old`}
+  - Sex: ${p.sex}
+  ${p.weightKg ? `- Weight: ${p.weightKg} kg` : ''}
+
+  Clinical Presentation:
+  - Onset: ${p.symptomOnset}
+  - Symptoms: ${symptomDescription}
+
+  Tasks:
+  - Identify 3 potential conditions appropriate for this child's age.
+  - Screen carefully for IMCI general danger signs (unable to drink or breastfeed, vomits everything,
+    convulsions, lethargy or unconsciousness, severe chest indrawing, fast breathing) — if any are
+    present or strongly implied, set emergencyAlert to true.
+  - Medication suggestions MUST be age-appropriate; when dosing depends on weight or age, say
+    "dose must be set by a health worker" instead of giving adult doses.
+  - Recommend the best care provider type (recommendedSpecialist).
+
+  IMPORTANT RULES:
+  1. RESPONSE MUST BE IN ${langName.toUpperCase()}. All descriptions, reasoning, advice, and names must be in ${langName}.
+  2. EXCEPTION: The 'recommendedSpecialist' field MUST be in ENGLISH and one of: 'General Practitioner', 'Pediatrician', 'Obstetrician-Gynecologist', 'Midwife'.
+  3. Maintain 'probability' values strictly as 'High', 'Moderate', or 'Low'.
+  4. Use JSON format matching the schema.
+  5. NEVER include raw image data or base64 strings in the response.
+`;
+
+const buildPregnancyPrompt = (p: PatientData, langName: string, symptomDescription: string) => `
+  Analyze the following OBSTETRIC case for a pregnant woman and identify potential conditions.
+
+  Patient:
+  - Pregnant woman, gestational age: ${p.gestationalWeek} weeks (trimester ${p.gestationalWeek! < 13 ? 1 : p.gestationalWeek! < 28 ? 2 : 3})
+  - Age: ${p.ageYears} years
+
+  Clinical Presentation:
+  - Onset: ${p.symptomOnset}
+  - Symptoms: ${symptomDescription}
+
+  Tasks:
+  - Identify 3 potential conditions, interpreting each symptom in the context of the gestational age.
+  - Screen carefully for obstetric danger signs (vaginal bleeding, severe headache with blurred vision,
+    convulsions, high fever, severe abdominal pain, reduced or absent fetal movement, waters breaking
+    before term, severe swelling of face/hands) — if any are present or strongly implied, set
+    emergencyAlert to true.
+  - Medication suggestions MUST be pregnancy-safe; when safety depends on trimester, say so and
+    recommend confirming with a midwife or doctor.
+  - Recommend the best care provider type (recommendedSpecialist).
+
+  IMPORTANT RULES:
+  1. RESPONSE MUST BE IN ${langName.toUpperCase()}. All descriptions, reasoning, advice, and names must be in ${langName}.
+  2. EXCEPTION: The 'recommendedSpecialist' field MUST be in ENGLISH and one of: 'General Practitioner', 'Pediatrician', 'Obstetrician-Gynecologist', 'Midwife'.
+  3. Maintain 'probability' values strictly as 'High', 'Moderate', or 'Low'.
+  4. Use JSON format matching the schema.
+  5. NEVER include raw image data or base64 strings in the response.
+`;
+
 export const analyzeSymptoms = async (
   patientData: PatientData,
   language: Language
 ): Promise<AnalysisResult> => {
   try {
-    const { age, sex, symptomOnset, symptoms, image } = patientData;
+    const { symptoms, image, mode } = patientData;
     const langName = getLanguageName(language);
 
     let symptomDescription = symptoms;
@@ -83,44 +164,24 @@ export const analyzeSymptoms = async (
       symptomDescription = "Visual symptoms are presented in the attached image. Please analyze the image carefully to identify the condition.";
     }
 
-    let promptText = `
-      Analyze the following patient case and identify potential medical conditions and medications.
-      
-      Patient Demographics:
-      - Age: ${age}
-      - Sex: ${sex}
-      
-      Clinical Presentation:
-      - Onset: ${symptomOnset}
-      - Symptoms: ${symptomDescription}
-      
-      Tasks:
-      - Identify 3 potential conditions.
-      - Suggest specific medications (OTC/Prescription) or home remedies.
-      - Recommend the best specialist type (recommendedSpecialist).
-      
-      IMPORTANT RULES:
-      1. RESPONSE MUST BE IN ${langName.toUpperCase()}. All descriptions, reasoning, advice, and names must be in ${langName}.
-      2. EXCEPTION: The 'recommendedSpecialist' field MUST be in ENGLISH (e.g., 'Cardiologist', 'Dermatologist') to match our database.
-      3. Maintain 'probability' values strictly as 'High', 'Moderate', or 'Low'.
-      4. Use JSON format matching the schema.
-      5. NEVER include raw image data or base64 strings in the response.
-    `;
+    let promptText = mode === 'child'
+      ? buildChildPrompt(patientData, langName, symptomDescription)
+      : buildPregnancyPrompt(patientData, langName, symptomDescription);
 
-    const systemInstruction = `You are an advanced AI medical diagnostic assistant. Your goal is to help patients understand their symptoms. Prioritize patient safety. If symptoms suggest an emergency, provide an immediate warning. Provide clear and easy-to-understand explanations in ${langName}. Follow the JSON schema strictly.`;
+    const systemInstruction = `You are an AI maternal and child health assistant for Timor-Leste, supporting mothers and caregivers. Your goal is to help them understand symptoms in children and during pregnancy. Prioritize safety above all: if symptoms suggest an emergency or a danger sign, provide an immediate warning and advise going to the nearest health facility. Provide clear, simple explanations in ${langName}. Follow the JSON schema strictly.`;
 
-    let modelToUse = DEFAULT_TEXT_MODEL;
+    let modelToUse = TEXT_MODEL;
     let cleanBase64 = null;
 
     if (image) {
-      modelToUse = DEFAULT_VISION_MODEL; // Switch to vision model if image is provided
+      modelToUse = VISION_MODEL; // Switch to vision model if image is provided
       const matches = image.match(/^data:([^;]+);base64,(.+)$/);
       if (matches && matches.length === 3) {
         cleanBase64 = matches[2];
       } else if (image.includes(',')) {
-         cleanBase64 = image.split(',')[1];
+        cleanBase64 = image.split(',')[1];
       } else {
-         cleanBase64 = image; 
+        cleanBase64 = image;
       }
       promptText += " Also consider visual evidence from the provided image.";
     }
@@ -129,29 +190,17 @@ export const analyzeSymptoms = async (
       model: modelToUse,
       messages: [
         { role: "system", content: systemInstruction },
-        { 
-          role: "user", 
+        {
+          role: "user",
           content: promptText,
-          ...(cleanBase64 ? { images: [cleanBase64] } : {}) 
+          ...(cleanBase64 ? { images: [cleanBase64] } : {})
         }
       ],
       format: analysisSchema,
       stream: false,
     };
 
-    const response = await fetch(OLLAMA_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) {
-      const errText = await response.text();
-      throw new Error(`Ollama API error: ${response.status} ${errText}`);
-    }
-
+    const response = await postChat(payload);
     const data = await response.json();
     const text = data.message?.content;
 
@@ -173,11 +222,11 @@ export const translateAnalysisResult = async (
 ): Promise<AnalysisResult> => {
   try {
     const langName = getLanguageName(targetLanguage);
-    
+
     const promptText = `
       You are a professional medical translator.
       Translate the values of the following JSON object into ${langName}.
-      
+
       Input JSON:
       ${JSON.stringify(currentResult)}
 
@@ -190,7 +239,7 @@ export const translateAnalysisResult = async (
     `;
 
     const payload = {
-      model: DEFAULT_TEXT_MODEL,
+      model: TEXT_MODEL,
       messages: [
         { role: "user", content: promptText }
       ],
@@ -198,19 +247,7 @@ export const translateAnalysisResult = async (
       stream: false,
     };
 
-    const response = await fetch(OLLAMA_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`Ollama API error: ${response.status} ${errText}`);
-    }
-
+    const response = await postChat(payload);
     const data = await response.json();
     const text = data.message?.content;
 

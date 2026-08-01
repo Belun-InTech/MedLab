@@ -1,5 +1,5 @@
 {
-  "name": "v2_231225_ of MurakMed AI - Tetum",
-  "description": "An intelligent medical symptom checker that helps patients understand potential conditions and suggests common medications using AI analysis.",
+  "name": "Médiku Labarik (MédLab)",
+  "description": "AI-powered maternal and child health assistant for Timor-Leste: symptom checking for children and pregnant mothers, pregnancy tracking, vaccination reminders, and access to doctors.",
   "requestFramePermissions": []
 }
