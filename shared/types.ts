@@ -1,7 +1,5 @@
 export type Language = 'en' | 'tet' | 'id';
 
-export type PatientMode = 'child' | 'pregnancy';
-
 export interface Child {
   id: string;
   name: string;
@@ -9,29 +7,44 @@ export interface Child {
   sex: 'Male' | 'Female';
 }
 
-export interface Mother {
-  name: string;
-  dob?: string;
-  pregnant: boolean;
-  lmp?: string; // last menstrual period, YYYY-MM-DD — drives gestational age
-}
-
+// The parent/guardian identity lives on the Account (see services/authService.ts);
+// the family profile is only the children they consult for.
 export interface FamilyProfile {
-  mother: Mother;
   children: Child[];
 }
 
-export interface PatientData {
-  mode: PatientMode;
+// Demo-only local account — see services/authService.ts
+export interface Account {
   name: string;
-  ageYears: number;
-  ageMonths: number; // total age in months; primary age unit for infants
-  sex: 'Male' | 'Female' | '';
-  gestationalWeek?: number; // pregnancy mode only
-  weightKg?: number; // child mode, optional
-  symptomOnset: string;
+  email: string;
+  password: string;
+  dob: string; // YYYY-MM-DD — backs the temporary "is a parent" age check
+}
+
+/**
+ * What the browser sends to POST /api/analyze. The child's name, age and sex are NOT
+ * sent — the server reads them from the database by childId, so a client cannot analyse
+ * against a child it does not own or fake an age.
+ */
+export interface AnalyzeRequest {
+  childId: string;
+  language: Language;
   symptoms: string;
+  symptomOnset: string;
+  weightKg?: number;
   image?: string;
+}
+
+/** A row in the child health timeline. */
+export interface ConsultationSummary {
+  id: string;
+  childId: string;
+  childName: string;
+  ageMonths: number;
+  symptoms: string;
+  emergencyAlert: boolean;
+  recommendedSpecialist: string;
+  createdAt: string;
 }
 
 export interface Medication {

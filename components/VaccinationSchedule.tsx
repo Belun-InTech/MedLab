@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Syringe, ArrowLeft, CheckCircle2, AlertTriangle, Clock, Baby } from 'lucide-react';
-import { FamilyProfile, VaccineDose } from '../types';
+import { FamilyProfile, VaccineDose } from '../shared/types';
 import { EPI_SCHEDULE } from '../constants/vaccineSchedule';
-import { ageInMonths, formatChildAge, getGivenVaccines, toggleVaccineGiven } from '../services/profileService';
+import { ageInMonths, formatChildAge, fetchGivenVaccines, toggleVaccineGiven } from '../services/profileService';
 
 interface VaccinationScheduleProps {
   profile: FamilyProfile;
@@ -33,7 +33,12 @@ const VaccinationSchedule: React.FC<VaccinationScheduleProps> = ({ profile, t, o
   const [given, setGiven] = useState<string[]>([]);
 
   useEffect(() => {
-    if (selectedChildId) setGiven(getGivenVaccines(selectedChildId));
+    if (!selectedChildId) return;
+    let cancelled = false;
+    fetchGivenVaccines(selectedChildId)
+      .then(doses => { if (!cancelled) setGiven(doses); })
+      .catch(e => console.error('Failed to load vaccine record', e));
+    return () => { cancelled = true; };
   }, [selectedChildId]);
 
   const child = profile.children.find(c => c.id === selectedChildId);
@@ -144,7 +149,7 @@ const VaccinationSchedule: React.FC<VaccinationScheduleProps> = ({ profile, t, o
                   </p>
                 </div>
                 <button
-                  onClick={() => setGiven(toggleVaccineGiven(child.id, dose.id))}
+                  onClick={() => { toggleVaccineGiven(child.id, dose.id).then(() => fetchGivenVaccines(child.id)).then(setGiven).catch(e => console.error('Failed to toggle vaccine', e)); }}
                   className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all active:scale-95
                     ${status === 'given'
                       ? 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500'

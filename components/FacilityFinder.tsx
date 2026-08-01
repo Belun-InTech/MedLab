@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MapPin, Phone, ArrowLeft, Building2, Hospital, Home, Stethoscope } from 'lucide-react';
 import { HEALTH_FACILITIES, MUNICIPALITIES } from '../constants/facilities';
-import { HealthFacility } from '../types';
+import { HealthFacility } from '../shared/types';
 
 interface FacilityFinderProps {
   t: any;

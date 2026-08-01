@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Server env — holds DB credentials and the opencode API key
+.env
+!.env.example
+
+# Compiled server output
+dist-server

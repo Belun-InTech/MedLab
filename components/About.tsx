@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowLeft, Shield, Clock, Brain, Activity } from 'lucide-react';
-import { Language } from '../types';
+import { Language } from '../shared/types';
 
 interface AboutProps {
   onBack: () => void;

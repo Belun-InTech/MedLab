@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Baby, Heart, Plus, Trash2, ArrowRight, ArrowLeft, User as UserIcon } from 'lucide-react';
-import { FamilyProfile, Child } from '../types';
+import { Baby, Plus, Trash2, ArrowRight, ArrowLeft } from 'lucide-react';
+import { FamilyProfile, Child } from '../shared/types';
 import { newChildId } from '../services/profileService';
 
 interface FamilyProfileSetupProps {
@@ -14,11 +14,12 @@ const inputClass = "w-full px-4 py-3 bg-white dark:bg-slate-800 border border-sl
 const labelClass = "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2";
 
 const FamilyProfileSetup: React.FC<FamilyProfileSetupProps> = ({ existingProfile, onSave, onCancel, t }) => {
-  const [momName, setMomName] = useState(existingProfile?.mother.name || '');
-  const [momDob, setMomDob] = useState(existingProfile?.mother.dob || '');
-  const [pregnant, setPregnant] = useState(existingProfile?.mother.pregnant ?? false);
-  const [lmp, setLmp] = useState(existingProfile?.mother.lmp || '');
-  const [children, setChildren] = useState<Child[]>(existingProfile?.children || []);
+  // Start a first-time setup with one blank row so the form isn't an empty page
+  const [children, setChildren] = useState<Child[]>(
+    existingProfile?.children.length
+      ? existingProfile.children
+      : [{ id: newChildId(), name: '', dob: '', sex: 'Male' }]
+  );
   const [error, setError] = useState('');
 
   const to = t.onboarding;
@@ -37,28 +38,20 @@ const FamilyProfileSetup: React.FC<FamilyProfileSetupProps> = ({ existingProfile
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!momName.trim()) {
-      setError(to.nameRequired);
+    // drop half-filled child rows silently
+    const complete = children.filter(c => c.name.trim() && c.dob);
+    if (complete.length === 0) {
+      setError(to.childRequired);
       return;
     }
-    const profile: FamilyProfile = {
-      mother: {
-        name: momName.trim(),
-        dob: momDob || undefined,
-        pregnant,
-        lmp: pregnant ? (lmp || undefined) : undefined,
-      },
-      // drop half-filled child rows silently
-      children: children.filter(c => c.name.trim() && c.dob),
-    };
-    onSave(profile);
+    onSave({ children: complete });
   };
 
   return (
     <div className="max-w-2xl mx-auto py-8 px-4 animate-fade-in">
       <div className="text-center mb-10">
         <div className="w-20 h-20 bg-blue-100 dark:bg-blue-900/30 rounded-3xl flex items-center justify-center mx-auto mb-6 rotate-6">
-          <Heart className="w-10 h-10 text-blue-600 dark:text-blue-400" />
+          <Baby className="w-10 h-10 text-blue-600 dark:text-blue-400 -rotate-6" />
         </div>
         <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-2">
           {existingProfile ? to.editTitle : to.title}
@@ -67,52 +60,6 @@ const FamilyProfileSetup: React.FC<FamilyProfileSetupProps> = ({ existingProfile
       </div>
 
       <form onSubmit={handleSave} className="space-y-8">
-        {/* Mother section */}
-        <section className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 sm:p-8 shadow-sm space-y-6">
-          <h3 className="text-sm font-black text-blue-600 uppercase tracking-widest flex items-center gap-2">
-            <UserIcon className="w-4 h-4" /> {to.momSection}
-          </h3>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>{to.momName}</label>
-              <input type="text" value={momName} onChange={e => setMomName(e.target.value)} className={inputClass} placeholder={to.momName} />
-            </div>
-            <div>
-              <label className={labelClass}>{to.momDob}</label>
-              <input type="date" value={momDob} onChange={e => setMomDob(e.target.value)} className={inputClass} />
-            </div>
-          </div>
-
-          <div>
-            <label className={labelClass}>{to.pregnantQ}</label>
-            <div className="flex gap-3">
-              {[{ v: true, l: to.yes }, { v: false, l: to.no }].map(opt => (
-                <button
-                  key={String(opt.v)}
-                  type="button"
-                  onClick={() => setPregnant(opt.v)}
-                  className={`px-6 py-2.5 rounded-xl text-sm font-bold border transition-all
-                    ${pregnant === opt.v
-                      ? 'bg-blue-600 border-blue-600 text-white shadow-md'
-                      : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400'}`}
-                >
-                  {opt.l}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {pregnant && (
-            <div className="animate-fade-in">
-              <label className={labelClass}>{to.lmp}</label>
-              <input type="date" value={lmp} onChange={e => setLmp(e.target.value)} className={inputClass} />
-              <p className="text-xs text-slate-400 mt-2">{to.lmpHelp}</p>
-            </div>
-          )}
-        </section>
-
-        {/* Children section */}
         <section className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 sm:p-8 shadow-sm space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-black text-blue-600 uppercase tracking-widest flex items-center gap-2">
@@ -139,7 +86,7 @@ const FamilyProfileSetup: React.FC<FamilyProfileSetupProps> = ({ existingProfile
               </div>
               <div>
                 <label className={labelClass}>{to.childDob}</label>
-                <input type="date" value={child.dob} onChange={e => updateChild(child.id, 'dob', e.target.value)} className={inputClass} />
+                <input type="date" value={child.dob} onChange={e => updateChild(child.id, 'dob', e.target.value)} max={new Date().toISOString().slice(0, 10)} className={inputClass} />
               </div>
               <div>
                 <label className={labelClass}>{to.childSex}</label>

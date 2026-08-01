@@ -7,9 +7,10 @@ import {
   Sun,
   Moon,
   Home,
-  Users
+  Users,
+  LogOut
 } from 'lucide-react';
-import { Language } from '../types';
+import { Language } from '../shared/types';
 
 interface HeaderProps {
   onLogoClick: () => void;
@@ -17,6 +18,7 @@ interface HeaderProps {
   onFaqClick: () => void;
   onAboutClick: () => void;
   onProfileClick: () => void;
+  onLogoutClick: () => void;
   currentLang: Language;
   onLanguageChange: (lang: Language) => void;
   t: any;
@@ -30,6 +32,7 @@ const Header: React.FC<HeaderProps> = ({
   onFaqClick,
   onAboutClick,
   onProfileClick,
+  onLogoutClick,
   currentLang,
   onLanguageChange,
   t,
@@ -61,6 +64,7 @@ const Header: React.FC<HeaderProps> = ({
     { icon: <Info className="w-4 h-4 text-blue-500" />, iconBg: 'bg-blue-50 dark:bg-blue-900/30', title: t.header.aboutMenuTitle, subtitle: t.header.aboutMenuSubtitle, action: onAboutClick },
     { icon: <HelpCircle className="w-4 h-4 text-purple-500" />, iconBg: 'bg-purple-50 dark:bg-purple-900/30', title: t.header.faq, subtitle: t.header.faqSubtitle, action: onFaqClick },
     { icon: <Users className="w-4 h-4 text-orange-500" />, iconBg: 'bg-orange-50 dark:bg-orange-900/30', title: t.header.editProfile, subtitle: t.header.editProfileSubtitle, action: onProfileClick },
+    { icon: <LogOut className="w-4 h-4 text-red-500" />, iconBg: 'bg-red-50 dark:bg-red-900/30', title: t.header.logout, subtitle: t.header.logoutSubtitle, action: onLogoutClick },
   ];
 
   return (

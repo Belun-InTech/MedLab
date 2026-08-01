@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AnalysisResult, Condition, Specialist } from '../types';
+import { AnalysisResult, Condition, Specialist } from '../shared/types';
 import {
   Info,
   ChevronDown,
