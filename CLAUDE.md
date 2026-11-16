@@ -148,7 +148,8 @@ bloat. `SPA_DIR` is not needed: `/app/dist-server/server/src/index.js` resolves
 | Container port for the domain | `3001` |
 | HTTPS | **required** — `issueSession` sets `secure: true` when `NODE_ENV=production`, so login silently fails over plain HTTP |
 | `DATABASE_URL` | points at the Dokploy MySQL *internal* hostname on port **3306**, not 3307 |
-| `AI_PROVIDER` | `opencode` — there is no Ollama on the VPS |
+| `AI_PROVIDER` | `opencode` or `dr7` — there is no Ollama on the VPS |
+| `DR7_API_KEY` / `DR7_MODEL` | required when `AI_PROVIDER=dr7`; model defaults to `medgemma-4b-it` (multimodal). `DR7_BASE_URL` defaults to `https://dr7.ai/api/v1/medical`. `DR7_MAX_TOKENS` defaults to 2048 — dr7's silent default of 1000 truncates Tetum JSON while still reporting `finish_reason: stop` |
 | `RUN_MIGRATIONS` | unset by default. Set to `true` for the one deploy carrying a schema change, then unset. Migrations are still never applied at boot by default |
 
 ## Conventions worth stating
@@ -174,6 +175,11 @@ These are unusual enough that new code gets them wrong by default.
      finishing setup lands the parent where they were headed.
   5. Every shell ends with `<Route path="*">` → its home, which also self-heals a URL left
      over from another role in the same tab.
+- **AI providers are a strategy map** in `server/src/ai/providers.ts`, keyed by
+  `AI_PROVIDER` (`ollama` · `opencode` · `dr7`). Any OpenAI-compatible host goes through
+  `openAiCompatible(name, cfg)` — add a config block in `env.ts` and one map entry, nothing
+  else. Each instance negotiates its own structured-output mode (`json_schema` →
+  `json_object` → prompt-only) once per process, reported by `/api/health`.
 - **Services return result objects, they do not throw.** Anything a form can fail at
   returns `{status:'ok'|'error', reason}`; reads return plain values. `ApiError` is caught
   in the service layer, never at a component boundary.
